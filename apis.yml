@@ -1,0 +1,73 @@
+aid: goto-webinar
+name: GoTo Webinar
+description: >-
+  GoTo Webinar is a webinar and virtual event platform from GoTo (formerly
+  LogMeIn) used by marketing, training, and corporate communications teams
+  to host live and on-demand webinars with registration, polling, Q&A,
+  recordings, and analytics. The product integrates with marketing automation
+  and CRM systems to drive lead capture and attendee follow-up. The GoTo
+  Webinar v2 REST API exposes organizer, webinar, session, registrant,
+  attendee, and analytics endpoints under api.getgo.com and uses OAuth2 for
+  authentication.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Webinars
+  - Virtual Events
+  - Video Conferencing
+  - Marketing
+  - Lead Capture
+  - Registration
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/goto-webinar/refs/heads/main/apis.yml
+created: '2026-05-11'
+modified: '2026-05-11'
+specificationVersion: '0.19'
+apis:
+  - aid: goto-webinar:rest-api-v2
+    name: GoTo Webinar REST API v2
+    description: >-
+      REST API for managing organizers, webinars, sessions, registrants,
+      attendees, panelists, polls, surveys, and recordings on the GoTo
+      Webinar platform. Authentication uses OAuth 2.0 via the GoTo identity
+      service, with authorization at api.getgo.com/oauth/v2/authorize and
+      token exchange at api.getgo.com/oauth/v2/token.
+    humanURL: https://developer.goto.com/GoToWebinarV2
+    baseURL: https://api.getgo.com/G2W/rest/v2
+    tags:
+      - Webinars
+      - Virtual Events
+      - Registrants
+      - Attendees
+      - Recordings
+      - Analytics
+    properties:
+      - type: Documentation
+        url: https://developer.goto.com/GoToWebinarV2
+      - type: Authentication
+        url: https://developer.goto.com/Authentication/
+      - type: Guides
+        url: https://developer.goto.com/guides/
+      - type: Changelog
+        url: https://developer.goto.com/changelog
+      - type: Status
+        url: https://status.developer.goto.com
+
+common:
+  - type: Website
+    url: https://www.goto.com/webinar
+  - type: Documentation
+    url: https://developer.goto.com
+  - type: Pricing
+    url: https://www.goto.com/webinar/pricing
+  - type: Sign Up
+    url: https://developer.goto.com/Registration
+  - type: Status
+    url: https://status.developer.goto.com
+  - type: Support
+    url: https://developer.goto.com/support
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/goto
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
