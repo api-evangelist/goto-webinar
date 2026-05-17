@@ -48,9 +48,9 @@ apis:
         url: https://developer.goto.com/Authentication/
       - type: Guides
         url: https://developer.goto.com/guides/
-      - type: Changelog
+      - type: ChangeLog
         url: https://developer.goto.com/changelog
-      - type: Status
+      - type: StatusPage
         url: https://status.developer.goto.com
 
 common:
@@ -60,9 +60,9 @@ common:
     url: https://developer.goto.com
   - type: Pricing
     url: https://www.goto.com/webinar/pricing
-  - type: Sign Up
+  - type: SignUp
     url: https://developer.goto.com/Registration
-  - type: Status
+  - type: StatusPage
     url: https://status.developer.goto.com
   - type: Support
     url: https://developer.goto.com/support
