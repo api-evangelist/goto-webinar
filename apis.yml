@@ -10,7 +10,7 @@ description: >-
   attendee, and analytics endpoints under api.getgo.com and uses OAuth2 for
   authentication.
 type: Index
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
   - Webinars
   - Virtual Events
