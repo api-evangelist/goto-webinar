@@ -54,6 +54,8 @@ apis:
         url: https://status.developer.goto.com
 
 common:
+  - type: OAuthScopes
+    url: scopes/goto-webinar-scopes.yml
   - type: Website
     url: https://www.goto.com/webinar
   - type: Documentation

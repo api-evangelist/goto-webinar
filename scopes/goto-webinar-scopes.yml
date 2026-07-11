@@ -1,0 +1,24 @@
+generated: '2026-07-11'
+method: searched
+source: openapi/goto-webinar-openapi.yml
+docs: https://developer.goto.com/GoToWebinarV2
+schemes:
+- name: oauth2
+  source: openapi/goto-webinar-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+    tokenUrl: https://authentication.logmeininc.com/oauth/token
+scopes:
+- scope: 'collab:'
+  description: >-
+    Grants access to the GoTo Webinar (collaboration) APIs. The GoTo Webinar
+    v2 API reference states this scope must be used when a token is requested
+    from the Authentication API.
+  sources:
+  - https://developer.goto.com/GoToWebinarV2
+note: >-
+  GoTo Webinar does not publish a granular per-endpoint scope catalog; the v2
+  API reference documents a single product-level scope (`collab:`) required
+  when requesting a token, with additional scopes selected per OAuth client in
+  the GoTo developer portal (https://developer.goto.com/GoToWebinarV2).
