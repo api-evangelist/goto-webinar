@@ -54,6 +54,10 @@ apis:
         url: https://status.developer.goto.com
 
 common:
+  - type: DomainSecurity
+    url: security/goto-webinar-domain-security.yml
+  - type: Authentication
+    url: authentication/goto-webinar-authentication.yml
   - type: OAuthScopes
     url: scopes/goto-webinar-scopes.yml
   - type: Website
