@@ -54,6 +54,8 @@ apis:
         url: https://status.developer.goto.com
 
 common:
+  - type: AgenticAccess
+    url: agentic-access/goto-webinar-agentic-access.yml
   - type: DomainSecurity
     url: security/goto-webinar-domain-security.yml
   - type: Authentication
