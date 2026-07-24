@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: GoTo Webinar REST API v2 Attendees Questions API
+  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
+  version: '2.0'
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- oauth2: []
+tags:
+- name: Questions
+paths:
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/questions:
+    get:
+      tags:
+      - Questions
+      summary: Get questions submitted during a session
+      operationId: listSessionQuestions
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200':
+          description: Questions
+components:
+  parameters:
+    OrganizerKey:
+      name: organizerKey
+      in: path
+      required: true
+      schema:
+        type: string
+    WebinarKey:
+      name: webinarKey
+      in: path
+      required: true
+      schema:
+        type: string
+    SessionKey:
+      name: sessionKey
+      in: path
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          scopes: {}

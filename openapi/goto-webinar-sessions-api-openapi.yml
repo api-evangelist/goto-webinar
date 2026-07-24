@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info:
+  title: GoTo Webinar REST API v2 Attendees Sessions API
+  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
+  version: '2.0'
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- oauth2: []
+tags:
+- name: Sessions
+paths:
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions:
+    get:
+      tags:
+      - Sessions
+      summary: Get past sessions for a webinar
+      operationId: listWebinarSessions
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}:
+    get:
+      tags:
+      - Sessions
+      summary: Get session details
+      operationId: getWebinarSession
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200':
+          description: Session
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/performance:
+    get:
+      tags:
+      - Sessions
+      summary: Get session performance
+      operationId: getSessionPerformance
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200':
+          description: Performance
+components:
+  schemas:
+    Session:
+      type: object
+      properties:
+        sessionKey:
+          type: string
+        webinarKey:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        registrantsAttended:
+          type: integer
+  parameters:
+    OrganizerKey:
+      name: organizerKey
+      in: path
+      required: true
+      schema:
+        type: string
+    WebinarKey:
+      name: webinarKey
+      in: path
+      required: true
+      schema:
+        type: string
+    SessionKey:
+      name: sessionKey
+      in: path
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          scopes: {}

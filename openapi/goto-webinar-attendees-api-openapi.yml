@@ -1,0 +1,94 @@
+openapi: 3.1.0
+info:
+  title: GoTo Webinar REST API v2 Attendees API
+  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
+  version: '2.0'
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- oauth2: []
+tags:
+- name: Attendees
+paths:
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/attendees:
+    get:
+      tags:
+      - Attendees
+      summary: Get session attendees
+      operationId: listSessionAttendees
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200':
+          description: Attendees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendee'
+  /organizers/{organizerKey}/webinars/{webinarKey}/attendees:
+    get:
+      tags:
+      - Attendees
+      summary: Get all attendees for all sessions of a webinar
+      operationId: listWebinarAttendees
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Attendees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendee'
+components:
+  schemas:
+    Attendee:
+      type: object
+      properties:
+        registrantKey:
+          type: string
+        sessionKey:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        attendanceTimeInSeconds:
+          type: integer
+  parameters:
+    OrganizerKey:
+      name: organizerKey
+      in: path
+      required: true
+      schema:
+        type: string
+    WebinarKey:
+      name: webinarKey
+      in: path
+      required: true
+      schema:
+        type: string
+    SessionKey:
+      name: sessionKey
+      in: path
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          scopes: {}

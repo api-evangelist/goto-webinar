@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: GoTo Webinar REST API v2 Attendees Registrants API
+  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
+  version: '2.0'
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- oauth2: []
+tags:
+- name: Registrants
+paths:
+  /organizers/{organizerKey}/webinars/{webinarKey}/registrants:
+    get:
+      tags:
+      - Registrants
+      summary: List registrants
+      operationId: listRegistrants
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Registrants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Registrant'
+    post:
+      tags:
+      - Registrants
+      summary: Create a registrant
+      operationId: createRegistrant
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - in: query
+        name: resendConfirmation
+        schema:
+          type: boolean
+          default: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registrant'
+      responses:
+        '201':
+          description: Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registrantKey:
+                    type: string
+                  joinUrl:
+                    type: string
+  /organizers/{organizerKey}/webinars/{webinarKey}/registrants/{registrantKey}:
+    get:
+      tags:
+      - Registrants
+      summary: Get a registrant
+      operationId: getRegistrant
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - in: path
+        name: registrantKey
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Registrant
+    delete:
+      tags:
+      - Registrants
+      summary: Delete a registrant
+      operationId: deleteRegistrant
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - in: path
+        name: registrantKey
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+components:
+  schemas:
+    Registrant:
+      type: object
+      properties:
+        registrantKey:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        registrationDate:
+          type: string
+          format: date-time
+        joinUrl:
+          type: string
+        timeZone:
+          type: string
+        status:
+          type: string
+          enum:
+          - APPROVED
+          - DENIED
+          - WAITING
+  parameters:
+    OrganizerKey:
+      name: organizerKey
+      in: path
+      required: true
+      schema:
+        type: string
+    WebinarKey:
+      name: webinarKey
+      in: path
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          scopes: {}

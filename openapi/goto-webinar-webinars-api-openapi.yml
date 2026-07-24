@@ -1,0 +1,257 @@
+openapi: 3.1.0
+info:
+  title: GoTo Webinar REST API v2 Attendees Webinars API
+  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
+  version: '2.0'
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- oauth2: []
+tags:
+- name: Webinars
+paths:
+  /organizers/{organizerKey}/webinars:
+    get:
+      tags:
+      - Webinars
+      summary: Get organizer's webinars in a date range
+      operationId: listOrganizerWebinars
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - in: query
+        name: fromTime
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: toTime
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 0
+      - in: query
+        name: size
+        schema:
+          type: integer
+          default: 20
+      responses:
+        '200':
+          description: List of webinars
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webinar'
+    post:
+      tags:
+      - Webinars
+      summary: Create a webinar
+      operationId: createWebinar
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebinarCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webinarKey:
+                    type: string
+  /organizers/{organizerKey}/upcomingWebinars:
+    get:
+      tags:
+      - Webinars
+      summary: Get upcoming webinars
+      operationId: listUpcomingWebinars
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      responses:
+        '200':
+          description: Upcoming webinars
+  /organizers/{organizerKey}/historicalWebinars:
+    get:
+      tags:
+      - Webinars
+      summary: Get historical webinars
+      operationId: listHistoricalWebinars
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - in: query
+        name: fromTime
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: toTime
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Historical webinars
+  /organizers/{organizerKey}/webinars/{webinarKey}:
+    get:
+      tags:
+      - Webinars
+      summary: Get a webinar
+      operationId: getWebinar
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Webinar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webinar'
+    put:
+      tags:
+      - Webinars
+      summary: Update a webinar
+      operationId: updateWebinar
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - in: query
+        name: notifyParticipants
+        schema:
+          type: boolean
+          default: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebinarCreate'
+      responses:
+        '204':
+          description: Updated
+    delete:
+      tags:
+      - Webinars
+      summary: Cancel a webinar
+      operationId: cancelWebinar
+      parameters:
+      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/WebinarKey'
+      - in: query
+        name: sendCancellationEmails
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '204':
+          description: Cancelled
+components:
+  schemas:
+    WebinarCreate:
+      type: object
+      required:
+      - subject
+      - times
+      - timeZone
+      properties:
+        subject:
+          type: string
+        description:
+          type: string
+        times:
+          type: array
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+                format: date-time
+              endTime:
+                type: string
+                format: date-time
+        timeZone:
+          type: string
+        type:
+          type: string
+          enum:
+          - single_session
+          - series
+          - sequence
+        isPasswordProtected:
+          type: boolean
+    Webinar:
+      type: object
+      properties:
+        webinarKey:
+          type: string
+        webinarID:
+          type: string
+        subject:
+          type: string
+        description:
+          type: string
+        organizerKey:
+          type: string
+        times:
+          type: array
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+                format: date-time
+              endTime:
+                type: string
+                format: date-time
+        timeZone:
+          type: string
+        locale:
+          type: string
+        type:
+          type: string
+          enum:
+          - single_session
+          - series
+          - sequence
+        impromptu:
+          type: boolean
+        isPasswordProtected:
+          type: boolean
+        registrationUrl:
+          type: string
+  parameters:
+    OrganizerKey:
+      name: organizerKey
+      in: path
+      required: true
+      schema:
+        type: string
+    WebinarKey:
+      name: webinarKey
+      in: path
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          scopes: {}
