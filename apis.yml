@@ -10,7 +10,19 @@ description: >-
   attendee, and analytics endpoints under api.getgo.com and uses OAuth2 for
   authentication.
 type: Index
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/goto-webinar.png
 tags:
   - Webinars
   - Virtual Events
@@ -24,35 +36,102 @@ created: '2026-05-11'
 modified: '2026-05-11'
 specificationVersion: '0.19'
 apis:
-  - aid: goto-webinar:rest-api-v2
-    name: GoTo Webinar REST API v2
-    description: >-
-      REST API for managing organizers, webinars, sessions, registrants,
-      attendees, panelists, polls, surveys, and recordings on the GoTo
-      Webinar platform. Authentication uses OAuth 2.0 via the GoTo identity
-      service, with authorization at api.getgo.com/oauth/v2/authorize and
-      token exchange at api.getgo.com/oauth/v2/token.
-    humanURL: https://developer.goto.com/GoToWebinarV2
-    baseURL: https://api.getgo.com/G2W/rest/v2
-    tags:
-      - Webinars
-      - Virtual Events
-      - Registrants
-      - Attendees
-      - Recordings
-      - Analytics
-    properties:
-      - type: Documentation
-        url: https://developer.goto.com/GoToWebinarV2
-      - type: Authentication
-        url: https://developer.goto.com/Authentication/
-      - type: Guides
-        url: https://developer.goto.com/guides/
-      - type: ChangeLog
-        url: https://developer.goto.com/changelog
-      - type: StatusPage
-        url: https://status.developer.goto.com
-
+- aid: goto-webinar:rest-api-v2
+  name: GoTo Webinar REST API v2
+  description: >-
+    REST API for managing organizers, webinars, sessions, registrants, attendees, panelists, polls, surveys,
+    and recordings on the GoTo Webinar platform. Authentication uses OAuth 2.0 via the GoTo identity service,
+    with authorization at api.getgo.com/oauth/v2/authorize and token exchange at api.getgo.com/oauth/v2/token.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Webinars
+  - Virtual Events
+  - Registrants
+  - Attendees
+  - Recordings
+  - Analytics
+  properties:
+  - type: Documentation
+    url: https://developer.goto.com/GoToWebinarV2
+  - type: Authentication
+    url: https://developer.goto.com/Authentication/
+  - type: Guides
+    url: https://developer.goto.com/guides/
+  - type: ChangeLog
+    url: https://developer.goto.com/changelog
+  - type: StatusPage
+    url: https://status.developer.goto.com
+- aid: goto-webinar:goto-webinar-attendees-api
+  name: GoTo Webinar Attendees API
+  description: The Attendees API from GoTo Webinar — 2 operation(s) for attendees.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Attendees
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-attendees-api-openapi.yml
+- aid: goto-webinar:goto-webinar-panelists-api
+  name: GoTo Webinar Panelists API
+  description: The Panelists API from GoTo Webinar — 1 operation(s) for panelists.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Panelists
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-panelists-api-openapi.yml
+- aid: goto-webinar:goto-webinar-polls-api
+  name: GoTo Webinar Polls API
+  description: The Polls API from GoTo Webinar — 1 operation(s) for polls.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Polls
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-polls-api-openapi.yml
+- aid: goto-webinar:goto-webinar-questions-api
+  name: GoTo Webinar Questions API
+  description: The Questions API from GoTo Webinar — 1 operation(s) for questions.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Questions
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-questions-api-openapi.yml
+- aid: goto-webinar:goto-webinar-registrants-api
+  name: GoTo Webinar Registrants API
+  description: The Registrants API from GoTo Webinar — 2 operation(s) for registrants.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Registrants
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-registrants-api-openapi.yml
+- aid: goto-webinar:goto-webinar-sessions-api
+  name: GoTo Webinar Sessions API
+  description: The Sessions API from GoTo Webinar — 3 operation(s) for sessions.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-sessions-api-openapi.yml
+- aid: goto-webinar:goto-webinar-webinars-api
+  name: GoTo Webinar Webinars API
+  description: The Webinars API from GoTo Webinar — 4 operation(s) for webinars.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Webinars
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-webinars-api-openapi.yml
 common:
   - type: AgenticAccess
     url: agentic-access/goto-webinar-agentic-access.yml
