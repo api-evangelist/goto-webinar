@@ -1,0 +1,429 @@
+openapi: 3.1.0
+info:
+  title: GoTo Webinar REST API v2
+  description: >-
+    Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar /
+    Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls,
+    questions, and panelists for organizer-scoped requests. Authentication is
+    OAuth 2.0 via GoTo's identity service.
+  version: '2.0'
+servers:
+  - url: https://api.getgo.com/G2W/rest/v2
+security:
+  - oauth2: []
+tags:
+  - name: Organizers
+  - name: Webinars
+  - name: Sessions
+  - name: Registrants
+  - name: Attendees
+  - name: Polls
+  - name: Questions
+  - name: Panelists
+paths:
+  /organizers/{organizerKey}/webinars:
+    get:
+      tags: [Webinars]
+      summary: Get organizer's webinars in a date range
+      operationId: listOrganizerWebinars
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - in: query
+          name: fromTime
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: toTime
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: page
+          schema: { type: integer, default: 0 }
+        - in: query
+          name: size
+          schema: { type: integer, default: 20 }
+      responses:
+        '200':
+          description: List of webinars
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Webinar' }
+    post:
+      tags: [Webinars]
+      summary: Create a webinar
+      operationId: createWebinar
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WebinarCreate' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webinarKey: { type: string }
+  /organizers/{organizerKey}/upcomingWebinars:
+    get:
+      tags: [Webinars]
+      summary: Get upcoming webinars
+      operationId: listUpcomingWebinars
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+      responses:
+        '200': { description: Upcoming webinars }
+  /organizers/{organizerKey}/historicalWebinars:
+    get:
+      tags: [Webinars]
+      summary: Get historical webinars
+      operationId: listHistoricalWebinars
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - in: query
+          name: fromTime
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: toTime
+          required: true
+          schema: { type: string, format: date-time }
+      responses:
+        '200': { description: Historical webinars }
+  /organizers/{organizerKey}/webinars/{webinarKey}:
+    get:
+      tags: [Webinars]
+      summary: Get a webinar
+      operationId: getWebinar
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Webinar
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Webinar' }
+    put:
+      tags: [Webinars]
+      summary: Update a webinar
+      operationId: updateWebinar
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - in: query
+          name: notifyParticipants
+          schema: { type: boolean, default: true }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WebinarCreate' }
+      responses:
+        '204': { description: Updated }
+    delete:
+      tags: [Webinars]
+      summary: Cancel a webinar
+      operationId: cancelWebinar
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - in: query
+          name: sendCancellationEmails
+          schema: { type: boolean, default: false }
+      responses:
+        '204': { description: Cancelled }
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions:
+    get:
+      tags: [Sessions]
+      summary: Get past sessions for a webinar
+      operationId: listWebinarSessions
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Session' }
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}:
+    get:
+      tags: [Sessions]
+      summary: Get session details
+      operationId: getWebinarSession
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200': { description: Session }
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/performance:
+    get:
+      tags: [Sessions]
+      summary: Get session performance
+      operationId: getSessionPerformance
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200': { description: Performance }
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/attendees:
+    get:
+      tags: [Attendees]
+      summary: Get session attendees
+      operationId: listSessionAttendees
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200':
+          description: Attendees
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Attendee' }
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/polls:
+    get:
+      tags: [Polls]
+      summary: Get poll results
+      operationId: listSessionPolls
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200': { description: Polls }
+  /organizers/{organizerKey}/webinars/{webinarKey}/sessions/{sessionKey}/questions:
+    get:
+      tags: [Questions]
+      summary: Get questions submitted during a session
+      operationId: listSessionQuestions
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - $ref: '#/components/parameters/SessionKey'
+      responses:
+        '200': { description: Questions }
+
+  /organizers/{organizerKey}/webinars/{webinarKey}/registrants:
+    get:
+      tags: [Registrants]
+      summary: List registrants
+      operationId: listRegistrants
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Registrants
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Registrant' }
+    post:
+      tags: [Registrants]
+      summary: Create a registrant
+      operationId: createRegistrant
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - in: query
+          name: resendConfirmation
+          schema: { type: boolean, default: false }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Registrant' }
+      responses:
+        '201':
+          description: Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registrantKey: { type: string }
+                  joinUrl: { type: string }
+  /organizers/{organizerKey}/webinars/{webinarKey}/registrants/{registrantKey}:
+    get:
+      tags: [Registrants]
+      summary: Get a registrant
+      operationId: getRegistrant
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - in: path
+          name: registrantKey
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Registrant }
+    delete:
+      tags: [Registrants]
+      summary: Delete a registrant
+      operationId: deleteRegistrant
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+        - in: path
+          name: registrantKey
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Deleted }
+  /organizers/{organizerKey}/webinars/{webinarKey}/attendees:
+    get:
+      tags: [Attendees]
+      summary: Get all attendees for all sessions of a webinar
+      operationId: listWebinarAttendees
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200':
+          description: Attendees
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Attendee' }
+  /organizers/{organizerKey}/webinars/{webinarKey}/panelists:
+    get:
+      tags: [Panelists]
+      summary: Get panelists for a webinar
+      operationId: listPanelists
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+      responses:
+        '200': { description: Panelists }
+    post:
+      tags: [Panelists]
+      summary: Create panelists for a webinar
+      operationId: createPanelists
+      parameters:
+        - $ref: '#/components/parameters/OrganizerKey'
+        - $ref: '#/components/parameters/WebinarKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name: { type: string }
+                  email: { type: string, format: email }
+      responses:
+        '201': { description: Panelists }
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          scopes: {}
+  parameters:
+    OrganizerKey:
+      name: organizerKey
+      in: path
+      required: true
+      schema: { type: string }
+    WebinarKey:
+      name: webinarKey
+      in: path
+      required: true
+      schema: { type: string }
+    SessionKey:
+      name: sessionKey
+      in: path
+      required: true
+      schema: { type: string }
+  schemas:
+    Webinar:
+      type: object
+      properties:
+        webinarKey: { type: string }
+        webinarID: { type: string }
+        subject: { type: string }
+        description: { type: string }
+        organizerKey: { type: string }
+        times:
+          type: array
+          items:
+            type: object
+            properties:
+              startTime: { type: string, format: date-time }
+              endTime: { type: string, format: date-time }
+        timeZone: { type: string }
+        locale: { type: string }
+        type:
+          type: string
+          enum: [single_session, series, sequence]
+        impromptu: { type: boolean }
+        isPasswordProtected: { type: boolean }
+        registrationUrl: { type: string }
+    WebinarCreate:
+      type: object
+      required: [subject, times, timeZone]
+      properties:
+        subject: { type: string }
+        description: { type: string }
+        times:
+          type: array
+          items:
+            type: object
+            properties:
+              startTime: { type: string, format: date-time }
+              endTime: { type: string, format: date-time }
+        timeZone: { type: string }
+        type:
+          type: string
+          enum: [single_session, series, sequence]
+        isPasswordProtected: { type: boolean }
+    Session:
+      type: object
+      properties:
+        sessionKey: { type: string }
+        webinarKey: { type: string }
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
+        registrantsAttended: { type: integer }
+    Registrant:
+      type: object
+      properties:
+        registrantKey: { type: string }
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string, format: email }
+        registrationDate: { type: string, format: date-time }
+        joinUrl: { type: string }
+        timeZone: { type: string }
+        status: { type: string, enum: [APPROVED, DENIED, WAITING] }
+    Attendee:
+      type: object
+      properties:
+        registrantKey: { type: string }
+        sessionKey: { type: string }
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string, format: email }
+        attendanceTimeInSeconds: { type: integer }

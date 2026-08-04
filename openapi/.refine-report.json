@@ -1,0 +1,26 @@
+{
+  "provider": "goto-webinar",
+  "sources": [
+    "goto-webinar-attendees-api-openapi.yml",
+    "goto-webinar-panelists-api-openapi.yml",
+    "goto-webinar-polls-api-openapi.yml",
+    "goto-webinar-questions-api-openapi.yml",
+    "goto-webinar-registrants-api-openapi.yml",
+    "goto-webinar-sessions-api-openapi.yml",
+    "goto-webinar-webinars-api-openapi.yml"
+  ],
+  "outputs": [
+    "goto-webinar-attendees-api-openapi.yml",
+    "goto-webinar-panelists-api-openapi.yml",
+    "goto-webinar-polls-api-openapi.yml",
+    "goto-webinar-questions-api-openapi.yml",
+    "goto-webinar-registrants-api-openapi.yml",
+    "goto-webinar-sessions-api-openapi.yml",
+    "goto-webinar-webinars-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
