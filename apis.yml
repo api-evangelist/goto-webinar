@@ -30,18 +30,28 @@ tags:
   - Marketing
   - Lead Capture
   - Registration
+  - Webhooks
+  - Event Management
+  - Collaboration
+  - Analytics
 url: >-
   https://raw.githubusercontent.com/api-evangelist/goto-webinar/refs/heads/main/apis.yml
 created: '2026-05-11'
-modified: '2026-05-11'
+modified: '2026-08-13'
 specificationVersion: '0.19'
 apis:
 - aid: goto-webinar:rest-api-v2
   name: GoTo Webinar REST API v2
   description: >-
-    REST API for managing organizers, webinars, sessions, registrants, attendees, panelists, polls, surveys,
-    and recordings on the GoTo Webinar platform. Authentication uses OAuth 2.0 via the GoTo identity service,
-    with authorization at api.getgo.com/oauth/v2/authorize and token exchange at api.getgo.com/oauth/v2/token.
+    The full GoTo Webinar v2 REST API as GoTo publishes it — 53 operations across
+    39 paths covering webinars, sessions, registrants, attendees, panelists,
+    co-organizers, polls, Q&A, surveys, recording assets and webhook management.
+    Authentication is OAuth 2.0 authorization-code with PKCE (S256) against GoTo's
+    identity service — authorization at identity.goto.com/oauth/authorize and
+    token exchange at identity.goto.com/oauth/token, still named as
+    authentication.logmeininc.com in the contract — using the product-level scope
+    `collab:`. API access carries no additional charge beyond a GoTo Webinar
+    product subscription.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -52,7 +62,11 @@ apis:
   - Recordings
   - Analytics
   properties:
+  - type: OpenAPI
+    url: openapi/_original/goto-webinar-openapi.yml
   - type: Documentation
+    url: https://developer.goto.com/GoToWebinarV2
+  - type: APIReference
     url: https://developer.goto.com/GoToWebinarV2
   - type: Authentication
     url: https://developer.goto.com/Authentication/
@@ -61,10 +75,19 @@ apis:
   - type: ChangeLog
     url: https://developer.goto.com/changelog
   - type: StatusPage
-    url: https://status.developer.goto.com
+    url: https://status.goto.com/
+  - type: Postman
+    url: collections/goto-webinar-v2-provider.postman_collection.json
+  - type: RateLimits
+    url: rate-limits/goto-webinar-rate-limits.yml
+  - type: Webhooks
+    url: asyncapi/goto-webinar-webhooks.yml
 - aid: goto-webinar:goto-webinar-attendees-api
   name: GoTo Webinar Attendees API
-  description: The Attendees API from GoTo Webinar — 2 operation(s) for attendees.
+  description: >-
+    Session-level attendee reporting for GoTo Webinar — 5 operations covering the
+    attendees of a session, a single attendee, and that attendee's poll answers,
+    Q&A questions and survey responses.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -74,7 +97,9 @@ apis:
     url: openapi/goto-webinar-attendees-api-openapi.yml
 - aid: goto-webinar:goto-webinar-panelists-api
   name: GoTo Webinar Panelists API
-  description: The Panelists API from GoTo Webinar — 1 operation(s) for panelists.
+  description: >-
+    Panelist management for a GoTo Webinar webinar — 4 operations to list, invite,
+    remove and resend the invitation for the presenters on a webinar.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -82,29 +107,12 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/goto-webinar-panelists-api-openapi.yml
-- aid: goto-webinar:goto-webinar-polls-api
-  name: GoTo Webinar Polls API
-  description: The Polls API from GoTo Webinar — 1 operation(s) for polls.
-  humanURL: https://developer.goto.com/GoToWebinarV2
-  baseURL: https://api.getgo.com/G2W/rest/v2
-  tags:
-  - Polls
-  properties:
-  - type: OpenAPI
-    url: openapi/goto-webinar-polls-api-openapi.yml
-- aid: goto-webinar:goto-webinar-questions-api
-  name: GoTo Webinar Questions API
-  description: The Questions API from GoTo Webinar — 1 operation(s) for questions.
-  humanURL: https://developer.goto.com/GoToWebinarV2
-  baseURL: https://api.getgo.com/G2W/rest/v2
-  tags:
-  - Questions
-  properties:
-  - type: OpenAPI
-    url: openapi/goto-webinar-questions-api-openapi.yml
 - aid: goto-webinar:goto-webinar-registrants-api
   name: GoTo Webinar Registrants API
-  description: The Registrants API from GoTo Webinar — 2 operation(s) for registrants.
+  description: >-
+    Registration management for GoTo Webinar — 5 operations to create, list, read
+    and delete registrants, plus read the registration form fields and custom
+    questions configured on a webinar.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -114,7 +122,10 @@ apis:
     url: openapi/goto-webinar-registrants-api-openapi.yml
 - aid: goto-webinar:goto-webinar-sessions-api
   name: GoTo Webinar Sessions API
-  description: The Sessions API from GoTo Webinar — 3 operation(s) for sessions.
+  description: >-
+    Session reporting for GoTo Webinar — 7 operations covering an organizer's
+    sessions in a date range, the sessions of a webinar, one session, its
+    attendance performance, and its polls, Q&A questions and surveys.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -124,7 +135,11 @@ apis:
     url: openapi/goto-webinar-sessions-api-openapi.yml
 - aid: goto-webinar:goto-webinar-webinars-api
   name: GoTo Webinar Webinars API
-  description: The Webinars API from GoTo Webinar — 4 operation(s) for webinars.
+  description: >-
+    The core GoTo Webinar surface — 15 operations to schedule, read, update,
+    cancel and copy webinars, list in-session and account-wide webinars, read
+    meeting times, start URLs, audio settings, recording assets, cross-session
+    attendees and webinar-wide performance.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -132,7 +147,49 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/goto-webinar-webinars-api-openapi.yml
+- aid: goto-webinar:goto-webinar-co-organizers-api
+  name: GoTo Webinar Co Organizers API
+  description: >-
+    Co-organizer management for a GoTo Webinar webinar — 4 operations to list,
+    add, remove and resend invitations for co-hosts, internal by organizerKey or
+    external by email.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Co-organizers
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-co-organizers-api-openapi.yml
+- aid: goto-webinar:goto-webinar-recordingassets-api
+  name: GoTo Webinar Recording Assets API
+  description: >-
+    Recording asset search for GoTo Webinar — 2 operations to search stored
+    recordings for the authenticated organizer or, with an admin token, across an
+    entire account. Assets can be reused as the source of a Simulive webinar.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - RecordingAssets
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-recordingassets-api-openapi.yml
+- aid: goto-webinar:goto-webinar-webhooks-api
+  name: GoTo Webinar Webhooks API
+  description: >-
+    Webhook management for GoTo Webinar — 11 operations to create the delivery
+    secret key, register and activate webhook callbacks, and create, read, update
+    and delete the per-user subscriptions that make events flow. GoTo Webinar is
+    the only GoTo product with webhooks.
+  humanURL: https://developer.goto.com/GoToWebinarV2
+  baseURL: https://api.getgo.com/G2W/rest/v2
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/goto-webinar-webhooks-api-openapi.yml
 common:
+  - type: OpenAPI
+    url: openapi/_original/goto-webinar-openapi.yml
   - type: AgenticAccess
     url: agentic-access/goto-webinar-agentic-access.yml
   - type: DomainSecurity
@@ -141,20 +198,81 @@ common:
     url: authentication/goto-webinar-authentication.yml
   - type: OAuthScopes
     url: scopes/goto-webinar-scopes.yml
+  - type: Packages
+    url: packages/goto-webinar-packages.yml
+  - type: SDKs
+    url: packages/goto-webinar-packages.yml
+  - type: WellKnown
+    url: well-known/goto-webinar-well-known.yml
+  - type: MCPServer
+    url: mcp/goto-webinar-mcp.yml
+  - type: LLMsTxt
+    url: llms/goto-webinar-llms.txt
+  - type: Overlay
+    url: overlays/goto-webinar-openapi-overlay.yaml
+  - type: Conformance
+    url: conformance/goto-webinar-conformance.yml
+  - type: Compliance
+    url: https://www.goto.com/company/trust/compliance
+  - type: TrustCenter
+    url: security/goto-webinar-trust-center.yml
+  - type: VulnerabilityDisclosure
+    url: security/goto-webinar-vulnerability-disclosure.yml
+  - type: Security
+    url: https://www.goto.com/company/trust/security-measures
+  - type: ErrorCatalog
+    url: errors/goto-webinar-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/goto-webinar-lifecycle.yml
+  - type: Conventions
+    url: conventions/goto-webinar-conventions.yml
+  - type: ChangeLog
+    url: changelog/goto-webinar-changelog.yml
+  - type: DataModel
+    url: data-model/goto-webinar-data-model.yml
+  - type: RateLimits
+    url: rate-limits/goto-webinar-rate-limits.yml
+  - type: Plans
+    url: plans/goto-webinar-plans-pricing.yml
+  - type: Webhooks
+    url: asyncapi/goto-webinar-webhooks.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Postman
+    url: collections/goto-webinar-v2-provider.postman_collection.json
   - type: Website
     url: https://www.goto.com/webinar
+  - type: DeveloperPortal
+    url: https://developer.goto.com
   - type: Documentation
     url: https://developer.goto.com
+  - type: APIReference
+    url: https://developer.goto.com/GoToWebinarV2
+  - type: GettingStarted
+    url: https://developer.goto.com/guides/Get%20Started/00_Ref-Get-Started
+  - type: GitHubOrganization
+    url: https://github.com/GoTo-Developers
+  - type: Blog
+    url: https://www.goto.com/blog
   - type: Pricing
-    url: https://www.goto.com/webinar/pricing
-  - type: Signup
-    url: https://developer.goto.com/Registration
+    url: https://www.goto.com/pricing/webinar
+  - type: SignUp
+    url: https://developer.goto.com/signup
+  - type: TermsOfService
+    url: https://www.goto.com/company/legal/api-terms
+  - type: PrivacyPolicy
+    url: https://www.goto.com/company/legal/privacy
   - type: StatusPage
-    url: https://status.developer.goto.com
+    url: https://status.goto.com/
   - type: Support
     url: https://developer.goto.com/support
   - type: LinkedIn
     url: https://www.linkedin.com/company/goto
+x-enrichment:
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 18
+  pass: local-v1
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
