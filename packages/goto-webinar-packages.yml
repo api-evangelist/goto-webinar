@@ -1,0 +1,112 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.goto.com/guides/SDKs/01_Introduction/
+docs:
+- https://developer.goto.com/guides/SDKs/01_Introduction/
+- https://developer.goto.com/guides/SDKs/02_Java-SDK/
+- https://developer.goto.com/guides/SDKs/03_NET-SDK/
+note: >-
+  GoTo publishes first-party SDKs for GoTo Webinar in exactly two ecosystems —
+  Java (Maven Central, group com.logmein) and .NET (NuGet, LogMeIn.*). The SDK
+  introduction page states SDKs are provided "in source and binary formats for
+  the GoToMeeting, GoToWebinar and GoToTraining REST APIs for .NET and Java"
+  and that "SDKs for the other GoTo products will follow". There is no
+  first-party JavaScript/TypeScript, Python, Ruby, PHP, Go or Rust client —
+  npm/PyPI/RubyGems probes for `gotowebinar` all returned 404 and every
+  npm/GitHub result is third-party (Pipedream, DataFire, n8n, community
+  wrappers). Currency is the headline finding: the newest first-party GoTo
+  Webinar SDK release on any registry is 2022-06-01, four years before this
+  probe, while the REST API itself shipped changes as recently as 2026-06-09.
+  The shared .NET core library (LogMeIn.GoToCoreLib.NET) is explicitly marked
+  deprecated in GoTo's own .NET SDK guide.
+packages:
+- language: java
+  registry: maven
+  name: com.logmein:gotowebinar-api
+  url: https://central.sonatype.com/artifact/com.logmein/gotowebinar-api
+  install: |
+    <dependency>
+      <groupId>com.logmein</groupId>
+      <artifactId>gotowebinar-api</artifactId>
+      <version>2.9.0</version>
+    </dependency>
+  official: true
+  version: 2.9.0
+  published: '2022-05-27'
+  source: https://search.maven.org/solrsearch/select?q=g:com.logmein+AND+a:gotowebinar-api
+  note: >-
+    The GoTo Webinar Java SDK. 11 versions published to Maven Central; 2.9.0 is
+    the latest and matches the version GoTo's own Java SDK guide documents.
+- language: java
+  registry: maven
+  name: com.logmein:goto-core-lib
+  url: https://central.sonatype.com/artifact/com.logmein/goto-core-lib
+  install: |
+    <dependency>
+      <groupId>com.logmein</groupId>
+      <artifactId>goto-core-lib</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+  official: true
+  version: 3.0.0
+  published: '2023-07-20'
+  source: https://search.maven.org/solrsearch/select?q=g:com.logmein+AND+a:goto-core-lib
+  note: >-
+    Shared OAuth/authentication core library. Required alongside
+    gotowebinar-api — GoTo's guide says "to develop for GoToWebinar, you need
+    to install gotowebinar-api and goto-core-lib".
+- language: dotnet
+  registry: nuget
+  name: LogMeIn.GoToWebinar.NET
+  url: https://www.nuget.org/packages/LogMeIn.GoToWebinar.NET
+  install: Install-Package LogMeIn.GoToWebinar.NET
+  official: true
+  version: 2.9.0
+  published: '2022-06-01'
+  source: https://api.nuget.org/v3/registration5-semver1/logmein.gotowebinar.net/index.json
+  note: >-
+    The GoTo Webinar .NET SDK. Requires .NET Framework 4.0 or higher and
+    depends on Json.NET.
+- language: dotnet
+  registry: nuget
+  name: LogMeIn.GoToCoreLib.NET
+  url: https://www.nuget.org/packages/LogMeIn.GoToCoreLib.NET
+  install: Install-Package LogMeIn.GoToCoreLib.NET
+  official: true
+  version: 2.2.0
+  published: '2020-07-21'
+  deprecated: true
+  source: https://api.nuget.org/v3/registration5-semver1/logmein.gotocorelib.net/index.json
+  note: >-
+    Shared OAuth core library for the .NET SDKs. GoTo's own .NET SDK guide
+    carries a DEPRECATION NOTE — "The GoToCoreLib SDK is deprecated and will no
+    longer be supported. The current version is the last version for now." It
+    is still the documented dependency for the GoTo Webinar .NET SDK, so the
+    supported path depends on a package the vendor has declared end-of-life.
+absent:
+- registry: npm
+  name: gotowebinar
+  status: 404
+  note: No first-party JavaScript/TypeScript client. registry.npmjs.org/gotowebinar returned 404.
+- registry: pypi
+  name: gotowebinar
+  status: 404
+  note: No first-party Python client. pypi.org/pypi/gotowebinar/json returned 404.
+- registry: rubygems
+  name: gotowebinar
+  status: 404
+  note: >-
+    No current first-party Ruby client. A historical Citrix Online wrapper
+    exists on GitHub (citrixonline/GoToWebinar-Ruby) but was last pushed
+    2017-12-18 and is not published to RubyGems.
+currency:
+  latest_first_party_release: '2023-07-20'
+  latest_webinar_sdk_release: '2022-06-01'
+  latest_api_change: '2026-06-09'
+  note: >-
+    Decay signal. The most recent GoTo Webinar SDK artifact on any registry is
+    LogMeIn.GoToWebinar.NET 2.9.0 (2022-06-01); the shared Java core library
+    was refreshed once since (3.0.0, 2023-07-20). The GoTo Webinar REST API's
+    own changelog records changes on 2025-01-21, 2025-03-25 (x2) and
+    2026-06-09, so the first-party SDKs predate documented API changes and do
+    not cover the survey.submitted webhook event added in June 2026.

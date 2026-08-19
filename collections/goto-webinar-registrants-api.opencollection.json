@@ -1,0 +1,141 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "GoTo Webinar REST API v2 Attendees Registrants API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "authorization_code",
+      "authorizationUrl": "https://authentication.logmeininc.com/oauth/authorize",
+      "accessTokenUrl": "https://authentication.logmeininc.com/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Registrants",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List registrants",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey/registrants",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List registrants"
+        },
+        {
+          "info": {
+            "name": "Create a registrant",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey/registrants",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "resendConfirmation",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a registrant"
+        },
+        {
+          "info": {
+            "name": "Get a registrant",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey/registrants/:registrantKey",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "registrantKey",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a registrant"
+        },
+        {
+          "info": {
+            "name": "Delete a registrant",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey/registrants/:registrantKey",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "registrantKey",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a registrant"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

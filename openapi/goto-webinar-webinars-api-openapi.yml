@@ -1,257 +1,2287 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: GoTo Webinar REST API v2 Attendees Webinars API
-  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
-  version: '2.0'
+  title: GoTo Webinar 2.0 REST Webinars API
+  description: 'We recommend you use the v2 of this API. If you are still using v1, you can access [v1 documentation](/GoToWebinarV1).
+
+
+    ### Authentication Scopes
+
+    `collab:` must be used when a token is requested from the Authentication API.
+
+
+    # GoTo Webinar API Overview
+
+    Use the GoTo Webinar API to:
+
+    - Schedule webinars of one or more sessions
+
+    - Tailor your webinars with panelists, polls, questions and surveys
+
+    - Accept registrations
+
+    - Manage registrants and, once the webinar starts, attendees
+
+    - View data about historical and future webinars, registrants and attendees
+
+
+    Refer to GoTo Webinar product documentation to review the webinar types and product functionality.
+
+
+    Review call bodies and example call bodies in the API calls for alternate usage.
+
+
+    Note: Both userKey and organizerKey used in the APIs contain the same value
+
+
+    ## Getting Started
+
+    1. [Register](/guides/Get%20Started/01_HOW_developerAccount) for a developer account.
+
+    2. Create an [OAuth client](/guides/Get%20Started/02_HOW_createClient) and include the product(s) you plan to develop with.
+
+    3. Obtain a product account as needed. Trial versions will work, but last only 30 days. We recommend a full-featured account, preferably with an Admin role.
+
+    4. Request an [Access Token](/guides/Authentication/03_HOW_accessToken) to make API calls.
+
+    5. Make your first API calls. You can use cURL, Postman, or other API interfaces to make calls.
+
+    '
+  version: 2.0.0
 servers:
 - url: https://api.getgo.com/G2W/rest/v2
 security:
-- oauth2: []
+- OAuth2: []
 tags:
 - name: Webinars
+  description: Operations available for webinars of a given organizer.
 paths:
+  /accounts/{accountKey}/webinars:
+    get:
+      tags:
+      - Webinars
+      operationId: getAllAccountWebinars
+      summary: Get all webinars for an account
+      description: 'Retrieves the list of webinars for an account within a given date range. `Page` and `size` parameters are optional. Default `page` is 0 and default `size` is 20.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/accountKey'
+      - $ref: '#/components/parameters/requiredFromTime'
+      - $ref: '#/components/parameters/requiredToTime'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportingWebinarsResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/webinars',\n  params: {\n    fromTime: '2020-03-13T10:00:00Z',\n    toTime: '2020-03-13T22:00:00Z',\n    page: 'SOME_INTEGER_VALUE',\n    size: 'SOME_INTEGER_VALUE'\n  },\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/webinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z&page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/accounts/%7BaccountKey%7D/webinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z&page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/webinars');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'fromTime' => '2020-03-13T10:00:00Z',\n  'toTime' => '2020-03-13T22:00:00Z',\n  'page' => 'SOME_INTEGER_VALUE',\n  'size' => 'SOME_INTEGER_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/webinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z&page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
   /organizers/{organizerKey}/webinars:
     get:
       tags:
       - Webinars
-      summary: Get organizer's webinars in a date range
-      operationId: listOrganizerWebinars
+      operationId: getWebinars
+      summary: Get Webinars
+      description: Returns upcoming and past webinars for the currently authenticated organizer that are scheduled within the specified date/time range. `Page` and `size` parameters are optional. Default `page` is 0 and default `size` is 20. Maximum `size` is 200.
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - in: query
-        name: fromTime
-        required: true
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: toTime
-        required: true
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: page
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/requiredFromTime'
+      - $ref: '#/components/parameters/requiredToTime'
+      - $ref: '#/components/parameters/page'
+      - name: size
+        in: query
+        required: false
+        description: The size of the page.
         schema:
           type: integer
-          default: 0
-      - in: query
-        name: size
-        schema:
-          type: integer
-          default: 20
+          format: int64
+          maximum: 200
       responses:
         '200':
-          description: List of webinars
+          description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webinar'
+                $ref: '#/components/schemas/ReportingWebinarsResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars',\n  params: {\n    fromTime: '2020-03-13T10:00:00Z',\n    toTime: '2020-03-13T22:00:00Z',\n    page: 'SOME_INTEGER_VALUE',\n    size: 'SOME_INTEGER_VALUE'\n  },\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z&page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z&page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'fromTime' => '2020-03-13T10:00:00Z',\n  'toTime' => '2020-03-13T22:00:00Z',\n  'page' => 'SOME_INTEGER_VALUE',\n  'size' => 'SOME_INTEGER_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z&page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
     post:
       tags:
       - Webinars
-      summary: Create a webinar
       operationId: createWebinar
+      summary: Create webinar
+      description: "Creates a single session webinar, a sequence of webinars or a series of webinars depending on the type field in the body:\n * `\"type\": \"single_session\"` creates a single webinar session\n * `\"type\": \"sequence\"` creates a webinar with multiple meeting times where attendees are expected to be the same for\nall sessions\n * `\"type\": \"series\"` creates a webinar with multiple meetings times where attendees choose only one to attend\n\nThe default, if no type is declared, is `\"single_session\"`.\n\n A sequence webinar requires a `\"recurrenceStart\"` object consisting of a `\"startTime\"` and `\"endTime\"` key\n  for the first webinar of the sequence, a `\"recurrencePattern\"` of \"daily\",\n  \"weekly\", \"monthly\", and a `\"recurrenceEnd\"` which is the last date of the sequence (for example, 2016-12-01).\n\n A series webinar requires a `\"times\"`\n  array with a discrete `\"startTime\"` and `\"endTime\"` for each webinar in the\n  series.\n\n The call requires a webinar subject and description. The \"isPasswordProtected\" sets whether the webinar requires a password for\n  attendees to join. If set to True, the organizer must go to Registration Settings at My Webinars (https://global.gotowebinar.com/webinars.tmpl)\n  and add the password to the webinar, and send the password to the registrants. The response provides a numeric webinarKey in string format\n  for the new webinar. Once a webinar has been created with this method,you can accept registrations.\n"
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/organizerKey'
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WebinarCreate'
+              $ref: '#/components/schemas/WebinarReqCreate'
+        description: The webinar details
+        required: true
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  webinarKey:
-                    type: string
-  /organizers/{organizerKey}/upcomingWebinars:
+                $ref: '#/components/schemas/CreatedWebinar'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    subject: 'string',\n    description: 'string',\n    times: [{startTime: '2019-08-24T14:15:22Z', endTime: '2019-08-24T14:15:22Z'}],\n    timeZone: 'string',\n    type: 'single_session',\n    locale: 'en_US',\n    isPasswordProtected: false,\n    recordingAssetKey: 'string',\n    isOndemand: false,\n    isBreakout: false,\n    experienceType: 'CLASSIC',\n    emailSettings: {\n      confirmationEmail: {enabled: true},\n      reminderEmail: {enabled: true},\n      absenteeFollowUpEmail: {enabled: true},\n      attendeeFollowUpEmail: {enabled: true, includeCertificate: true}\n    }\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"subject\":\"string\",\"description\":\"string\",\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\",\"type\":\"single_session\",\"locale\":\"en_US\",\"isPasswordProtected\":false,\"recordingAssetKey\":\"string\",\"isOndemand\":false,\"isBreakout\":false,\"experienceType\":\"CLASSIC\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}}}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"subject\\\":\\\"string\\\",\\\"description\\\":\\\"string\\\",\\\"times\\\":[{\\\"startTime\\\":\\\"2019-08-24T14:15:22Z\\\",\\\"endTime\\\":\\\"2019-08-24T14:15:22Z\\\"}],\\\"timeZone\\\":\\\"string\\\",\\\"type\\\":\\\"single_session\\\",\\\"locale\\\":\\\"en_US\\\",\\\"isPasswordProtected\\\":false,\\\"recordingAssetKey\\\":\\\"string\\\",\\\"isOndemand\\\":false,\\\"isBreakout\\\":false,\\\"experienceType\\\":\\\"CLASSIC\\\",\\\"emailSettings\\\":{\\\"confirmationEmail\\\":{\\\"enabled\\\":true},\\\"reminderEmail\\\":{\\\"enabled\\\":true},\\\"absenteeFollowUpEmail\\\":{\\\"enabled\\\":true},\\\"attendeeFollowUpEmail\\\":{\\\"enabled\\\":true,\\\"includeCertificate\\\":true}}}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"subject\":\"string\",\"description\":\"string\",\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\",\"type\":\"single_session\",\"locale\":\"en_US\",\"isPasswordProtected\":false,\"recordingAssetKey\":\"string\",\"isOndemand\":false,\"isBreakout\":false,\"experienceType\":\"CLASSIC\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}}}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"subject\":\"string\",\"description\":\"string\",\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\",\"type\":\"single_session\",\"locale\":\"en_US\",\"isPasswordProtected\":false,\"recordingAssetKey\":\"string\",\"isOndemand\":false,\"isBreakout\":false,\"experienceType\":\"CLASSIC\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}}}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/insessionWebinars:
     get:
       tags:
       - Webinars
-      summary: Get upcoming webinars
-      operationId: listUpcomingWebinars
+      operationId: getInSessionWebinars
+      summary: Get All Insession Webinars
+      description: 'Returns all insession webinars for the currently authenticated organizer that are scheduled within the specified date/time range. All inession webinars are returned in case no date/time range is provided.
+
+        '
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/optionalFromTime'
+      - $ref: '#/components/parameters/optionalToTime'
       responses:
         '200':
-          description: Upcoming webinars
-  /organizers/{organizerKey}/historicalWebinars:
-    get:
-      tags:
-      - Webinars
-      summary: Get historical webinars
-      operationId: listHistoricalWebinars
-      parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - in: query
-        name: fromTime
-        required: true
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: toTime
-        required: true
-        schema:
-          type: string
-          format: date-time
-      responses:
-        '200':
-          description: Historical webinars
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrokerWebinar'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/insessionWebinars',\n  params: {fromTime: '2020-03-13T10:00:00Z', toTime: '2020-03-13T22:00:00Z'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/insessionWebinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/insessionWebinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/insessionWebinars');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'fromTime' => '2020-03-13T10:00:00Z',\n  'toTime' => '2020-03-13T22:00:00Z'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/insessionWebinars?fromTime=2020-03-13T10%3A00%3A00Z&toTime=2020-03-13T22%3A00%3A00Z")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
   /organizers/{organizerKey}/webinars/{webinarKey}:
     get:
       tags:
       - Webinars
-      summary: Get a webinar
       operationId: getWebinar
+      summary: Get webinar
+      description: 'Retrieve information on a specific webinar. If the type of the webinar is ''sequence'', a sequence of future times will be provided. Webinars of type ''series'' are treated the same as normal webinars - each session in the webinar series has a different webinarKey. If an organizer cancels a webinar, then a request to get that webinar would return a ''404 Not Found'' error.
+
+        '
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
       responses:
         '200':
-          description: Webinar
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webinar'
+                $ref: '#/components/schemas/WebinarByKey'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
     put:
       tags:
       - Webinars
-      summary: Update a webinar
       operationId: updateWebinar
+      summary: Update webinar
+      description: 'Updates a webinar. The call requires at least one of the parameters in the request body. The request completely replaces the existing session, series, or sequence and so must include the full definition of each as for the Create call. Set notifyParticipants=true to send update emails to registrants.
+
+        '
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
-      - in: query
-        name: notifyParticipants
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - name: notifyParticipants
+        in: query
+        description: Defines whether to send notifications to participants
+        required: false
         schema:
           type: boolean
-          default: true
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WebinarCreate'
+              $ref: '#/components/schemas/WebinarReqUpdate'
+        description: The webinar details
+        required: true
       responses:
-        '204':
-          description: Updated
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request (times not valid, webinar in progress, webinar ended, etc.)
+        '403':
+          description: Forbidden
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'PUT',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D',\n  params: {notifyParticipants: 'SOME_BOOLEAN_VALUE'},\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    subject: 'string',\n    description: 'string',\n    times: [{startTime: '2019-08-24T14:15:22Z', endTime: '2019-08-24T14:15:22Z'}],\n    timeZone: 'string',\n    locale: 'en_US',\n    emailSettings: {\n      confirmationEmail: {enabled: true},\n      reminderEmail: {enabled: true},\n      absenteeFollowUpEmail: {enabled: true},\n      attendeeFollowUpEmail: {enabled: true, includeCertificate: true}\n    }\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request PUT \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D?notifyParticipants=SOME_BOOLEAN_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"subject\":\"string\",\"description\":\"string\",\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\",\"locale\":\"en_US\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}}}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"subject\\\":\\\"string\\\",\\\"description\\\":\\\"string\\\",\\\"times\\\":[{\\\"startTime\\\":\\\"2019-08-24T14:15:22Z\\\",\\\"endTime\\\":\\\"2019-08-24T14:15:22Z\\\"}],\\\"timeZone\\\":\\\"string\\\",\\\"locale\\\":\\\"en_US\\\",\\\"emailSettings\\\":{\\\"confirmationEmail\\\":{\\\"enabled\\\":true},\\\"reminderEmail\\\":{\\\"enabled\\\":true},\\\"absenteeFollowUpEmail\\\":{\\\"enabled\\\":true},\\\"attendeeFollowUpEmail\\\":{\\\"enabled\\\":true,\\\"includeCertificate\\\":true}}}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"PUT\", \"/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D?notifyParticipants=SOME_BOOLEAN_VALUE\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"subject\":\"string\",\"description\":\"string\",\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\",\"locale\":\"en_US\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}}}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D');\n$request->setRequestMethod('PUT');\n$request->setBody($body);\n\n$request->setQuery(new http\\QueryString([\n  'notifyParticipants' => 'SOME_BOOLEAN_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D?notifyParticipants=SOME_BOOLEAN_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Put.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"subject\":\"string\",\"description\":\"string\",\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\",\"locale\":\"en_US\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}}}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
     delete:
       tags:
       - Webinars
-      summary: Cancel a webinar
       operationId: cancelWebinar
+      summary: Cancel webinar
+      description: 'Cancels a specific webinar. If the webinar is a series or sequence, this call deletes all scheduled sessions, set deleteAll=false in the request to  delete specific session of a series webinar. To send cancellation emails to registrants set sendCancellationEmails=true in the request. When the cancellation emails are sent, the default generated message is used in the cancellation email body.
+
+        '
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
-      - in: query
-        name: sendCancellationEmails
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - name: sendCancellationEmails
+        in: query
+        description: Indicates whether cancellation notice emails should be sent. The default value is false
+        required: false
         schema:
           type: boolean
-          default: false
+      - name: deleteAll
+        in: query
+        description: Specifies whether all scheduled sessions should be deleted if the webinar is part of a series. The default value is true.
+        required: false
+        schema:
+          type: boolean
       responses:
         '204':
-          description: Cancelled
+          description: No Content
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict (Webinar is in session)
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'DELETE',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D',\n  params: {sendCancellationEmails: 'SOME_BOOLEAN_VALUE', deleteAll: 'SOME_BOOLEAN_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request DELETE \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D?sendCancellationEmails=SOME_BOOLEAN_VALUE&deleteAll=SOME_BOOLEAN_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("DELETE", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D?sendCancellationEmails=SOME_BOOLEAN_VALUE&deleteAll=SOME_BOOLEAN_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D');\n$request->setRequestMethod('DELETE');\n$request->setQuery(new http\\QueryString([\n  'sendCancellationEmails' => 'SOME_BOOLEAN_VALUE',\n  'deleteAll' => 'SOME_BOOLEAN_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D?sendCancellationEmails=SOME_BOOLEAN_VALUE&deleteAll=SOME_BOOLEAN_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Delete.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/attendees:
+    get:
+      tags:
+      - Webinars
+      operationId: getAttendeesForAllWebinarSessions
+      summary: Get attendees for all webinar sessions
+      description: Returns all attendees for all sessions of the specified webinar.
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportingAttendeeResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/attendees',\n  params: {page: 'SOME_INTEGER_VALUE', size: 'SOME_INTEGER_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/attendees?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/attendees?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/attendees');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'page' => 'SOME_INTEGER_VALUE',\n  'size' => 'SOME_INTEGER_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/attendees?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/meetingtimes:
+    get:
+      tags:
+      - Webinars
+      operationId: getWebinarMeetingTimes
+      summary: Get webinar meeting times
+      description: Retrieves the meeting times for a webinar.
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DateTimeRange'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/meetingtimes',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/meetingtimes \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/meetingtimes", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/meetingtimes');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/meetingtimes")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/audio:
+    get:
+      tags:
+      - Webinars
+      operationId: getAudioInformation
+      summary: Get audio information
+      description: Retrieves the audio/conferencing information for a specific webinar.
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Audio'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    post:
+      tags:
+      - Webinars
+      operationId: updateAudioInformation
+      summary: Update audio information
+      description: Updates the audio/conferencing settings for a specific webinar
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - name: notifyParticipants
+        in: query
+        description: Defines whether to send notifications to participants
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AudioUpdate'
+        description: The audio/conferencing settings
+        required: true
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio',\n  params: {notifyParticipants: 'SOME_BOOLEAN_VALUE'},\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    type: 'PSTN',\n    pstnInfo: {tollFreeCountries: ['AE'], tollCountries: ['AT']},\n    privateInfo: {attendee: 'string', organizer: 'string', panelist: 'string'}\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio?notifyParticipants=SOME_BOOLEAN_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"type\":\"PSTN\",\"pstnInfo\":{\"tollFreeCountries\":[\"AE\"],\"tollCountries\":[\"AT\"]},\"privateInfo\":{\"attendee\":\"string\",\"organizer\":\"string\",\"panelist\":\"string\"}}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"type\\\":\\\"PSTN\\\",\\\"pstnInfo\\\":{\\\"tollFreeCountries\\\":[\\\"AE\\\"],\\\"tollCountries\\\":[\\\"AT\\\"]},\\\"privateInfo\\\":{\\\"attendee\\\":\\\"string\\\",\\\"organizer\\\":\\\"string\\\",\\\"panelist\\\":\\\"string\\\"}}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio?notifyParticipants=SOME_BOOLEAN_VALUE\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"type\":\"PSTN\",\"pstnInfo\":{\"tollFreeCountries\":[\"AE\"],\"tollCountries\":[\"AT\"]},\"privateInfo\":{\"attendee\":\"string\",\"organizer\":\"string\",\"panelist\":\"string\"}}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setQuery(new http\\QueryString([\n  'notifyParticipants' => 'SOME_BOOLEAN_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/audio?notifyParticipants=SOME_BOOLEAN_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"type\":\"PSTN\",\"pstnInfo\":{\"tollFreeCountries\":[\"AE\"],\"tollCountries\":[\"AT\"]},\"privateInfo\":{\"attendee\":\"string\",\"organizer\":\"string\",\"panelist\":\"string\"}}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/performance:
+    get:
+      tags:
+      - Webinars
+      operationId: getPerformanceForAllWebinarSessions
+      summary: Get performance for all webinar sessions
+      description: Gets performance details for all sessions of a specific webinar.
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: Describes performance details for webinars
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/SessionPerformance'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/performance',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/performance \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/performance", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/performance');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/performance")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /webinars/{webinarKey}/startUrl:
+    get:
+      tags:
+      - Webinars
+      operationId: getStartUrl
+      summary: Webinar start url
+      description: 'Retrieves a URL that can be used to start a webinar. When this URL is opened in a web browser, the GoTo Webinar client will be downloaded, launched and the webinar will start after the organizer logs in with its credentials.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebinarStartUrlResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/startUrl',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/startUrl \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/webinars/%7BwebinarKey%7D/startUrl", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/startUrl');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/startUrl")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /webinars/{webinarKey}/copy:
+    put:
+      tags:
+      - Webinars
+      operationId: copyWebinar
+      summary: Copy a webinar
+      description: "Copy webinar is created with new webinar key, based on source webinar key provided in URL. Only the organizer and co-organizer of given webinar can copy a webinar.\n\n### Example Interaction with curl\n\nBelow is the minimum request to make a request, default type is single_session.\n\n```\ncurl --request PUT 'https://api.getgo.com/G2W/rest/v2/webinars/{webinarKey}/copy' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n    \"subject\": \"My Webinar\",\n    \"times\": [\n        {\n            \"startTime\": \"2021-02-20T07:30:00.000Z\",\n            \"endTime\": \"2021-02-20T07:40:00.000Z\"\n        }\n    ]\n}'\n\n```\n\nBelow is a request for when the parent webinar is SIMULIVE\n\n```\ncurl --request PUT 'https://api.getgo.com/G2W/rest/v2/webinars/{webinarKey}/copy' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n    \"subject\": \"My Webinar\",\n    \"recordingAssetKey\": \"string\",\n    \"isOndemand\": true,\n    \"type\": \"single_session\",\n    \"times\": [\n        {\n            \"startTime\": \"2021-10-22T07:30:00.000Z\",\n            \"endTime\": \"2021-10-22T08:30:00.000Z\"\n        }\n    ]\n}'\n\n```\n\nBelow request is when the parent webinar is CLASSIC or BROADCAST.\n\n```\ncurl --request PUT 'https://api.getgo.com/G2W/rest/v2/webinars/{webinarKey}/copy' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n    \"subject\": \"My Webinar\",\n    \"times\": [\n        {\n            \"startTime\": \"2021-02-20T07:30:00.000Z\",\n            \"endTime\": \"2021-02-20T07:40:00.000Z\"\n        }\n    ],\n    \"emailSettings\": {\n        \"confirmationEmail\": {\n            \"enabled\": true\n        },\n        \"reminderEmail\": {\n            \"enabled\": true\n        },\n        \"absenteeFollowUpEmail\": {\n            \"enabled\": true\n        },\n        \"attendeeFollowUpEmail\": {\n            \"enabled\": true,\n            \"includeCertificate\": true\n        }\n    }\n}'\n\n```\n"
+      parameters:
+      - $ref: '#/components/parameters/sourceWebinarKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyWebinar'
+        description: Provide a webinar details to be copied
+        required: true
+      responses:
+        '201':
+          description: Copied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CopiedWebinar'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'PUT',\n  url: 'https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/copy',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    subject: 'string',\n    description: 'string',\n    type: 'single_session',\n    recordingAssetKey: 'string',\n    isOndemand: false,\n    locale: 'en_US',\n    emailSettings: {\n      confirmationEmail: {enabled: true},\n      reminderEmail: {enabled: true},\n      absenteeFollowUpEmail: {enabled: true},\n      attendeeFollowUpEmail: {enabled: true, includeCertificate: true}\n    },\n    times: [{startTime: '2019-08-24T14:15:22Z', endTime: '2019-08-24T14:15:22Z'}],\n    timeZone: 'string'\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request PUT \\\n  --url https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/copy \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"subject\":\"string\",\"description\":\"string\",\"type\":\"single_session\",\"recordingAssetKey\":\"string\",\"isOndemand\":false,\"locale\":\"en_US\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}},\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\"}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"subject\\\":\\\"string\\\",\\\"description\\\":\\\"string\\\",\\\"type\\\":\\\"single_session\\\",\\\"recordingAssetKey\\\":\\\"string\\\",\\\"isOndemand\\\":false,\\\"locale\\\":\\\"en_US\\\",\\\"emailSettings\\\":{\\\"confirmationEmail\\\":{\\\"enabled\\\":true},\\\"reminderEmail\\\":{\\\"enabled\\\":true},\\\"absenteeFollowUpEmail\\\":{\\\"enabled\\\":true},\\\"attendeeFollowUpEmail\\\":{\\\"enabled\\\":true,\\\"includeCertificate\\\":true}},\\\"times\\\":[{\\\"startTime\\\":\\\"2019-08-24T14:15:22Z\\\",\\\"endTime\\\":\\\"2019-08-24T14:15:22Z\\\"}],\\\"timeZone\\\":\\\"string\\\"}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"PUT\", \"/G2W/rest/v2/webinars/%7BwebinarKey%7D/copy\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"subject\":\"string\",\"description\":\"string\",\"type\":\"single_session\",\"recordingAssetKey\":\"string\",\"isOndemand\":false,\"locale\":\"en_US\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}},\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\"}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/copy');\n$request->setRequestMethod('PUT');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/copy")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Put.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"subject\":\"string\",\"description\":\"string\",\"type\":\"single_session\",\"recordingAssetKey\":\"string\",\"isOndemand\":false,\"locale\":\"en_US\",\"emailSettings\":{\"confirmationEmail\":{\"enabled\":true},\"reminderEmail\":{\"enabled\":true},\"absenteeFollowUpEmail\":{\"enabled\":true},\"attendeeFollowUpEmail\":{\"enabled\":true,\"includeCertificate\":true}},\"times\":[{\"startTime\":\"2019-08-24T14:15:22Z\",\"endTime\":\"2019-08-24T14:15:22Z\"}],\"timeZone\":\"string\"}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /webinars/{webinarKey}/recordingAssets:
+    get:
+      tags:
+      - Webinars
+      operationId: getRecordingAssets
+      summary: Get all the recording assets associated with the webinarKey
+      description: 'Get all the recording assets associated with online recordings of the webinarKey.
+
+
+        ### Example Interaction with curl
+
+
+        The default request is represented below.
+
+        By default, you will get the `mp4DownloadUrl` in the response and `transcriptUrl` if it exists.
+
+        The `recordingShareUrl` and `webinarKey` fields will be included by default.
+
+
+        ```
+
+        curl --request GET ''https://api.getgo.com/G2W/rest/v2/webinars/{webinarKey}/recordingAssets?page={page}&size={size}'' \
+
+        --header ''Authorization: Bearer {ACCESS_TOKEN}'' \
+
+        --header ''Content-Type: application/json'' \
+
+
+        ```
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordingAssetsResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/recordingAssets',\n  params: {page: 'SOME_INTEGER_VALUE', limit: 'SOME_INTEGER_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/recordingAssets?page=SOME_INTEGER_VALUE&limit=SOME_INTEGER_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/webinars/%7BwebinarKey%7D/recordingAssets?page=SOME_INTEGER_VALUE&limit=SOME_INTEGER_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/recordingAssets');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'page' => 'SOME_INTEGER_VALUE',\n  'limit' => 'SOME_INTEGER_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webinars/%7BwebinarKey%7D/recordingAssets?page=SOME_INTEGER_VALUE&limit=SOME_INTEGER_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
 components:
+  parameters:
+    optionalToTime:
+      name: toTime
+      in: query
+      description: 'End of the datetime range in ISO8601 UTC format. The reserved characters like ''+'' have to be encoded while being passed as query parameter.
+
+        '
+      example: '2020-03-13T22:00:00Z'
+      required: true
+      schema:
+        type: string
+        format: date-time
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number to be displayed. The first page is 0.
+      schema:
+        type: integer
+        format: int64
+    size:
+      name: size
+      in: query
+      required: false
+      description: The size of the page.
+      schema:
+        type: integer
+        format: int64
+        maximum: 200
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: The size of the page.
+      schema:
+        type: integer
+        format: int64
+        maximum: 200
+    requiredToTime:
+      name: toTime
+      in: query
+      description: 'End of the datetime range in ISO8601 UTC format. The reserved characters like ''+'' have to be encoded while being passed as query parameter.
+
+        '
+      example: '2020-03-13T22:00:00Z'
+      required: true
+      schema:
+        type: string
+        format: date-time
+    organizerKey:
+      name: organizerKey
+      in: path
+      description: The key of the organizer
+      required: true
+      schema:
+        type: integer
+        format: int64
+    accountKey:
+      name: accountKey
+      in: path
+      description: The key of the account
+      required: true
+      schema:
+        type: integer
+        format: int64
+    sourceWebinarKey:
+      name: webinarKey
+      in: path
+      description: The key of source webinar
+      required: true
+      schema:
+        type: integer
+        format: int64
+    webinarKey:
+      name: webinarKey
+      in: path
+      description: The key of the webinar
+      required: true
+      schema:
+        type: integer
+        format: int64
+    optionalFromTime:
+      name: fromTime
+      in: query
+      description: 'Start of the datetime range in ISO8601 UTC format. The reserved characters like ''+'' have to be encoded while being passed as query parameter.
+
+        '
+      required: false
+      example: '2020-03-13T10:00:00Z'
+      schema:
+        type: string
+        format: date-time
+    requiredFromTime:
+      name: fromTime
+      in: query
+      description: 'Start of the datetime range in ISO8601 UTC format. The reserved characters like ''+'' have to be encoded while being passed as query parameter.
+
+        '
+      required: true
+      example: '2020-03-13T10:00:00Z'
+      schema:
+        type: string
+        format: date-time
   schemas:
-    WebinarCreate:
-      type: object
+    AttendeeFollowUpEmailSetting:
+      description: Describes Attendee follow-up email settings.
+      allOf:
+      - $ref: '#/components/schemas/EmailSettings'
+      - type: object
+        properties:
+          includeCertificate:
+            type: boolean
+            description: Indicates whether to include certificates in attendee follow-up emails is enabled or disabled.
+    WebinarReqCreate:
+      description: Describes the details used to create a new single session webinar.
       required:
       - subject
       - times
-      - timeZone
       properties:
         subject:
           type: string
+          description: The name/subject of the webinar (128 characters maximum)
         description:
           type: string
+          description: A short description of the webinar (2048 characters maximum)
+        times:
+          description: 'Array with startTime and endTime for webinar. Since this call creates single session webinars, the array can only contain a single pair of startTime and endTime
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/DateTimeRange'
+        timeZone:
+          type: string
+          description: 'The time zone where the webinar is taking place (must be a valid time zone ID). If this parameter is not passed, the timezone of the organizer''s profile will be used
+
+            '
+        type:
+          description: 'Specifies the webinar type. The default type value is ''single_session'', which is used to create a single webinar session. The possible values are ''single_session'', ''series'', ''sequence''. If type is set to ''single_session'', a single webinar session is created. If type is set to ''series'', a webinar series is created. In this case 2 or more timeframes must be specified for each webinar. Example: ''times'': [{''startTime'': ''...'', ''endTime'': ''...''},{''startTime'': ''...'', ''endTime'': ''...''},{''startTime'': ''...'', ''endTime'': ''...''}. If type is set to ''sequence'' a sequence of webinars is created. The times object in the body must be replaced by the ''recurrenceStart'' object. Example: ''recurrenceStart'': {''startTime'':''2012-06-12T16:00:00Z'', ''endTime'': ''2012-06-12T17:00:00Z'' }.  The ''recurrenceEnd'' and ''recurrencePattern'' body parameter must be specified. Example: , ''recurrenceEnd'': ''2012-07-10'', ''recurrencePattern'': ''daily''.
+
+            '
+          type: string
+          default: single_session
+        locale:
+          type: string
+          enum:
+          - en_US
+          - de_DE
+          - es_ES
+          - fr_FR
+          - it_IT
+          - zh_CN
+          description: The webinar language
+        isPasswordProtected:
+          type: boolean
+          default: false
+          description: A boolean flag indicating if the webinar is password protected or not.
+        recordingAssetKey:
+          type: string
+          description: The recording asset with which the simulive webinar should be created from. In case the recordingasset was created as an online recording the simulive webinar settings, poll and surveys would be copied from the webinar whose session was recorded.
+        isOndemand:
+          type: boolean
+          default: false
+          description: A boolean flag indicating if the webinar should be ondemand
+        isBreakout:
+          type: boolean
+          default: false
+          description: A boolean flag indicating if the webinar should be breakout
+        experienceType:
+          description: Specifies the experience type. The possible values are 'CLASSIC', 'BROADCAST' and 'SIMULIVE'.
+          default: CLASSIC
+          type: string
+        emailSettings:
+          $ref: '#/components/schemas/WebinarEmailSettings'
+    AudioType:
+      description: How to connect to the webinar's audio conference
+      type: string
+      enum:
+      - PSTN
+      - VOIP
+      - Hybrid
+      - Private
+    WebinarStartUrlResponse:
+      description: Describes a webinar start url
+      required:
+      - startUrl
+      properties:
+        startUrl:
+          type: string
+          description: The URL that can be used to start a webinar
+    WebinarEmailSettings:
+      description: Describes email settings of a webinar.
+      properties:
+        confirmationEmail:
+          $ref: '#/components/schemas/EmailSettings'
+        reminderEmail:
+          $ref: '#/components/schemas/EmailSettings'
+        absenteeFollowUpEmail:
+          $ref: '#/components/schemas/EmailSettings'
+        attendeeFollowUpEmail:
+          $ref: '#/components/schemas/AttendeeFollowUpEmailSetting'
+    RecordingAssetsResponse:
+      description: Describes a list of completed assets
+      required:
+      - data
+      - total
+      - page
+      - pageSize
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+        total:
+          type: integer
+          format: int32
+          description: The total elements
+        page:
+          type: integer
+          format: int32
+          description: The current page number. The first page is 0
+        pageSize:
+          type: integer
+          format: int32
+          description: The page size
+    TollFreeCountries:
+      description: Countries in which toll free PSTN numbers are available.
+      type: string
+      enum:
+      - AE
+      - AR
+      - AT
+      - AU
+      - BE
+      - BG
+      - BH
+      - BR
+      - BY
+      - CA
+      - CH
+      - CL
+      - CN
+      - CO
+      - CZ
+      - DE
+      - DK
+      - ES
+      - FI
+      - FR
+      - GB
+      - GR
+      - HK
+      - HU
+      - ID
+      - IE
+      - IL
+      - IN
+      - IS
+      - IT
+      - JP
+      - KR
+      - LU
+      - MX
+      - MY
+      - NL
+      - 'NO'
+      - NZ
+      - PA
+      - PE
+      - PH
+      - PL
+      - PT
+      - RO
+      - RU
+      - SA
+      - SE
+      - SG
+      - TH
+      - TR
+      - TW
+      - UA
+      - US
+      - UY
+      - VN
+      - ZA
+    SessionInfoStatistics:
+      description: Describes session details for webinar session
+      required:
+      - webinarName
+      - webinarId
+      - sessionKey
+      - timeZone
+      - experienceType
+      - recurrencePeriod
+      - startTime
+      - endTime
+      - registrationEmailOpenedCount
+      - registrationLinkClickedCount
+      properties:
+        webinarName:
+          type: string
+          description: Name of the webinar
+        webinarId:
+          type: string
+          description: The 9-digit webinar ID
+        sessionKey:
+          type: string
+          description: The key of the webinar session
+        timeZone:
+          type: string
+          description: The time zone where the webinar will take place
+        experienceType:
+          description: Specifies the webinar experience type.
+          type: string
+          enum:
+          - CLASSIC
+          - BROADCAST
+          - SIMULIVE
+        recurrencePeriod:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+          description: The starting time of an interval, e.g. 2020-03-13T10:00:00Z
+        endTime:
+          type: string
+          format: date-time
+          description: The ending time of an interval, e.g. 2020-03-13T22:00:00Z
+        registrationEmailOpenedCount:
+          type: string
+          description: The count of opened registration emails
+        registrationLinkClickedCount:
+          type: string
+          description: The count of registration links clicked
+    BrokerWebinar:
+      description: Describes a scheduled webinar
+      required:
+      - numberOfRegistrants
+      - times
+      - description
+      - subject
+      - inSession
+      - organizerKey
+      - webinarKey
+      - webinarID
+      - timeZone
+      - registrationUrl
+      - experienceType
+      - organizerEmail
+      - organizerName
+      - impromptu
+      - coorganizers
+      - isOndemand
+      properties:
+        numberOfRegistrants:
+          type: integer
+          format: int32
+          description: The number of registrants at the webinar
         times:
           type: array
           items:
-            type: object
-            properties:
-              startTime:
-                type: string
-                format: date-time
-              endTime:
-                type: string
-                format: date-time
+            $ref: '#/components/schemas/DateTimeRange'
+          description: Array with startTime and endTime for the webinar sessions
+        description:
+          type: string
+          description: A short description of the webinar
+        subject:
+          type: string
+          description: The webinar subject
+        inSession:
+          type: boolean
+          description: Indicates whether there is a webinar session currently in progress
+        organizerKey:
+          type: integer
+          format: int64
+          description: The key of the webinar organizer
+        webinarKey:
+          type: integer
+          format: int64
+          description: The unique key of the webinar
+        webinarID:
+          type: string
+          description: The 9-digit webinar ID
         timeZone:
           type: string
-        type:
+          description: The timezone where the webinar is taking place
+        registrationUrl:
           type: string
-          enum:
-          - single_session
-          - series
-          - sequence
-        isPasswordProtected:
+          description: The URL the webinar invitees can use to register
+        experienceType:
+          description: Specifies the experience type. The possible values are 'classic', 'broadcast' and 'simulive'.
+          type: string
+        coorganizers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoorganizerDetails'
+          description: Array with email address and organizerKey of Coorganizers
+        organizerEmail:
+          type: string
+          description: The email address of the organizer
+        organizerName:
+          type: string
+          description: The name of the webinar organizer
+        impromptu:
           type: boolean
-    Webinar:
-      type: object
+          description: A boolean flag indicating if the webinar type is impromptu
+        isOndemand:
+          type: boolean
+          default: false
+          description: A boolean flag indicating if the webinar should be ondemand
+    ReportingWebinarsResponse:
+      description: Describes a list of webinars for an account within a given date range
+      required:
+      - _embedded
+      - page
+      properties:
+        _embedded:
+          $ref: '#/components/schemas/ReportingWebinars'
+        page:
+          $ref: '#/components/schemas/page'
+    DateTimeRange:
+      description: A pair of DateTime values, the first of which serves as a start time and the second as an end time of an interval.
+      required:
+      - startTime
+      - endTime
+      properties:
+        startTime:
+          type: string
+          format: date-time
+          description: The starting time of an interval, e.g. 2020-03-13T10:00:00Z
+        endTime:
+          type: string
+          format: date-time
+          description: The ending time of an interval, e.g. 2020-03-13T22:00:00Z
+    CreatedWebinar:
+      description: Describes a newly created webinar.
+      required:
+      - webinarKey
       properties:
         webinarKey:
           type: string
+          description: The unique key of the webinar.
+        recurrenceKey:
+          type: string
+          description: The recurrence key of the webinar which is received only for Series Webinars.
+    SessionPerformance:
+      description: Describes performance details for webinar sessions
+      required:
+      - sessionInfo
+      - attendance
+      - pollsAndSurveys
+      properties:
+        sessionInfo:
+          $ref: '#/components/schemas/SessionInfoStatistics'
+        attendance:
+          $ref: '#/components/schemas/AttendanceStatistics'
+        pollsAndSurveys:
+          $ref: '#/components/schemas/PollsAndSurveysStatistics'
+    PstnInfoUpdate:
+      description: Defines the audio/conferencing settings for the specified webinar. It required to pass 'tollFreeCountries' or 'tollCountries' or both.
+      properties:
+        tollFreeCountries:
+          description: Defines in which countries toll free PSTN numbers are available.
+          type: array
+          items:
+            $ref: '#/components/schemas/TollFreeCountries'
+        tollCountries:
+          description: Defines in which countries toll PSTN numbers are available.
+          type: array
+          items:
+            $ref: '#/components/schemas/TollCountries'
+    Webinar:
+      description: Describes a webinar
+      required:
+      - webinarKey
+      - webinarId
+      - organizerKey
+      - accountKey
+      - subject
+      - description
+      - times
+      - timeZone
+      - locale
+      - status
+      - approvalType
+      - registrationUrl
+      - impromptu
+      - isPasswordProtected
+      - recurrenceType
+      - experienceType
+      properties:
+        webinarKey:
+          type: string
+          description: The unique key of the webinar
         webinarID:
           type: string
-        subject:
-          type: string
-        description:
-          type: string
+          description: The 9-digit webinar ID
         organizerKey:
           type: string
+          description: The key of the webinar organizer
+        accountKey:
+          type: string
+          description: The key of the account
+        subject:
+          type: string
+          description: The webinar subject
+        description:
+          type: string
+          description: A short description of the webinar
         times:
           type: array
           items:
-            type: object
-            properties:
-              startTime:
-                type: string
-                format: date-time
-              endTime:
-                type: string
-                format: date-time
+            $ref: '#/components/schemas/DateTimeRange'
+          description: Array with startTime and endTime for the webinar sessions
         timeZone:
           type: string
+          description: The timezone where the webinar is taking place
         locale:
           type: string
-        type:
-          type: string
           enum:
-          - single_session
-          - series
-          - sequence
-        impromptu:
-          type: boolean
-        isPasswordProtected:
-          type: boolean
+          - en_US
+          - de_DE
+          - es_ES
+          - fr_FR
+          - it_IT
+          - zh_CN
+          description: The webinar language
+        approvalType:
+          type: string
+          description: Specifies if the organizer needs to approve the webinar registrations. The possible values are 'AUTOMATIC' and 'MANUAL'.
         registrationUrl:
           type: string
-  parameters:
-    OrganizerKey:
-      name: organizerKey
-      in: path
-      required: true
-      schema:
-        type: string
-    WebinarKey:
-      name: webinarKey
-      in: path
-      required: true
-      schema:
-        type: string
+          description: The URL the webinar invitees can use to register
+        impromptu:
+          type: boolean
+          description: A boolean flag indicating if the webinar type is impromptu
+        isPasswordProtected:
+          type: boolean
+          description: A boolean flag indicating if the webinar is password protected
+        recurrenceType:
+          description: Specifies the recurrence type. The possible values are 'single_session', 'series' and 'sequence'.
+          type: string
+        experienceType:
+          description: Specifies the experience type. The possible values are 'classic', 'broadcast' and 'simulive'.
+          type: string
+    CopyWebinar:
+      description: Describes the details of the webinar to be copied
+      properties:
+        subject:
+          type: string
+          description: The name/subject of the webinar (128 characters maximum)
+        description:
+          type: string
+          description: A description of the webinar (2048 characters maximum)
+        type:
+          description: "Specifies the webinar type. The default type value is 'single_session', which is used to create a single webinar session. The possible values are 'single_session', 'series' and 'sequence'. If type is set to 'single_session', a single webinar session is created. If type is set to 'series', a webinar series is created. In this case 2 or more timeframes must be specified for each webinar. Example: 'times': [{'startTime': '...', 'endTime':'...'}, {'startTime': '...', 'endTime': '...'},{'startTime': '...','endTime': '...'}]. If type is set to 'sequence', a sequence of webinars is created. In this case 2 or more timeframes must be specified for each webinar. If given webinar is 'single_session', we can create 'sequence' or 'series'\n webinar, in this case 2 or more timeframes must be specified for each webinar\n(same example as above). If given webinar is 'series', we can create 'single_session' or 'sequence' webinar with 2 or more timeframes must be specified. If given webinar is simulive webinar 'sequence' type is not supported.\n"
+          type: string
+          default: single_session
+        recordingAssetKey:
+          type: string
+          description: The recording asset with from the simulive webinar should be created from. In case the recordingasset was created as an online recording the simulive webinar settings, poll and surveys would be copied from the webinar whose session was recorded. We can get recordingasset from [RecordingAssets](GoToWebinarV2#operation/searchAssets)
+        isOndemand:
+          type: boolean
+          default: false
+          description: A boolean flag indicating if the webinar should be ondemand
+        locale:
+          type: string
+          enum:
+          - en_US
+          - de_DE
+          - es_ES
+          - fr_FR
+          - it_IT
+          - zh_CN
+          description: The webinar language
+        emailSettings:
+          $ref: '#/components/schemas/WebinarEmailSettings'
+        times:
+          description: Array with start and end time(s) for webinar
+          type: array
+          items:
+            $ref: '#/components/schemas/DateTimeRange'
+        timeZone:
+          type: string
+          description: The time zone where the webinar is taking place (must be a valid time zone ID). If this parameter is not passed, the timezone of the organizer's profile will be used
+    CopiedWebinar:
+      description: Describes a newly copied webinar.
+      required:
+      - webinarKey
+      properties:
+        webinarKey:
+          type: string
+          description: The unique key of the webinar.
+    ReportingAttendee:
+      description: Describes the attendee of a webinar
+      required:
+      - registrantKey
+      - sessionKey
+      - email
+      - attendanceTimeInSeconds
+      - attendance
+      - firstName
+      - lastName
+      properties:
+        registrantKey:
+          type: integer
+          format: int64
+          description: The key of the webinar attendee
+        sessionKey:
+          type: integer
+          format: int64
+          description: The unique key of the webinar session
+        email:
+          type: string
+          description: The attendee's email address
+        attendanceTimeInSeconds:
+          type: integer
+          format: int64
+          description: The total attendance time in seconds
+        attendance:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attendance'
+          description: The list of times the attendee joined and left the webinar session
+        firstName:
+          type: string
+          description: The attendee's first name
+        lastName:
+          type: string
+          description: The attendee's last name
+    Audio:
+      description: Describes the audio/conferencing information for a webinar.
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/AudioType'
+        confCallNumbers:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CallNumbers'
+          description: 'The conference call numbers and access codes per country. This will be returned only, if ''type'' is not set to ''Private''.
+
+            '
+        privateInfo:
+          $ref: '#/components/schemas/PrivateInfo'
+    WebinarByKey:
+      description: Describes a webinar
+      required:
+      - webinarKey
+      - webinarID
+      - subject
+      - description
+      - organizerKey
+      - organizerEmail
+      - organizerName
+      - times
+      - registrationUrl
+      - inSession
+      - impromptu
+      - type
+      - timeZone
+      - numberOfRegistrants
+      - registrationLimit
+      - locale
+      - accountKey
+      - recurrencePeriod
+      - experienceType
+      - isPasswordProtected
+      properties:
+        webinarKey:
+          type: integer
+          format: int64
+          description: The unique key of the webinar
+        webinarID:
+          type: string
+          description: The 9-digit webinar ID
+        subject:
+          type: string
+          description: The webinar subject.
+        description:
+          type: string
+          description: A short description of the webinar
+        organizerKey:
+          type: integer
+          format: int64
+          description: The key of the webinar organizer
+        organizerEmail:
+          type: string
+          description: The email of the webinar organizer
+        organizerName:
+          type: string
+          description: The name of the webinar organizer
+        times:
+          type: array
+          items:
+            $ref: '#/components/schemas/DateTimeRange'
+          description: Array with startTime and endTime for the webinar sessions
+        registrationUrl:
+          type: string
+          description: The URL the webinar invitees can use to register
+        inSession:
+          type: boolean
+          description: Indicates whether there is a webinar session currently in progress
+        impromptu:
+          type: boolean
+          description: A boolean flag indicating if the webinar type is impromptu
+        type:
+          description: Specifies the recurrence type. The possible values are 'single_session', 'series' and 'sequence'.
+          type: string
+        timeZone:
+          type: string
+          description: The timezone where the webinar is taking place
+        numberOfRegistrants:
+          type: integer
+          format: int32
+          description: The number of registrants at the webinar
+        registrationLimit:
+          type: integer
+          format: int32
+          description: The maximum number of registrants a webinar can have
+        locale:
+          type: string
+          enum:
+          - en_US
+          - de_DE
+          - es_ES
+          - fr_FR
+          - it_IT
+          - zh_CN
+          description: The webinar language
+        accountKey:
+          type: string
+          description: The key of the account
+        recurrencePeriod:
+          description: Specifies the recurrence type. The possible values are 'single_session', 'series' and 'sequence'.
+          type: string
+        experienceType:
+          description: Specifies the experience type. The possible values are 'classic', 'broadcast' and 'simulive'.
+          type: string
+        isPasswordProtected:
+          type: boolean
+          description: A boolean flag indicating if the webinar is password protected
+    PollsAndSurveysStatistics:
+      description: Details on the polls and surveys for a webinar session.
+      required:
+      - pollCount
+      - surveyCount
+      - questionsAsked
+      - percentagePollsCompleted
+      - percentageSurveysCompleted
+      properties:
+        pollCount:
+          type: integer
+          format: int32
+          description: The number of polls launched at a webinar session
+        surveyCount:
+          type: number
+          format: float
+          description: The percentage of surveys launched at a webinar session
+        questionsAsked:
+          type: integer
+          format: int32
+          description: The number of questions asked at a webinar session
+        percentagePollsCompleted:
+          type: number
+          format: float
+          description: The percentage of polls completed by the attendees
+        percentageSurveysCompleted:
+          type: number
+          format: float
+          description: The percentage of surveys completed by the attendees
+    PrivateInfoUpdate:
+      description: Defines the audio data for an own conferencing system
+      required:
+      - attendee
+      properties:
+        attendee:
+          description: Attendee phone number for own conference call system
+          type: string
+        organizer:
+          description: Organizer phone number for own conference call system
+          type: string
+        panelist:
+          description: Panelist phone number for own conference call system
+          type: string
+    EmailSettings:
+      description: Describes Confirmation email, Reminder email and Absentee follow-up email settings.
+      properties:
+        enabled:
+          type: boolean
+          description: Indicates whether email settings are enabled or disabled.
+    PrivateInfo:
+      description: Phone numbers for an own conference call service.
+      required:
+      - attendee
+      properties:
+        attendee:
+          type: string
+          description: Text for the panelist when using an own conference call service
+        organizer:
+          type: string
+          description: Text for the organizer when using an own conference call service
+        panelist:
+          type: string
+          description: Text for the panelist when using an own conference call service
+    AccessCodes:
+      description: Describes the access codes for organizer, panelists and attendees
+      required:
+      - organizer
+      - panelist
+      - attendee
+      properties:
+        organizer:
+          type: string
+          description: Access code for the organizer
+        panelist:
+          type: string
+          description: Access code for panelists
+        attendee:
+          type: string
+          description: Access code for attendees
+    TollCountries:
+      description: Defines in which countries toll PSTN numbers are available.
+      type: string
+      enum:
+      - AT
+      - AU
+      - BE
+      - CA
+      - CH
+      - DE
+      - DK
+      - ES
+      - FI
+      - FR
+      - GB
+      - IE
+      - IT
+      - NL
+      - 'NO'
+      - NZ
+      - SE
+      - US
+    ReportingAttendeeResponse:
+      description: Describes a list of webinar attendees
+      required:
+      - _embedded
+      - page
+      properties:
+        _embedded:
+          $ref: '#/components/schemas/ReportingAttendees'
+        page:
+          $ref: '#/components/schemas/page'
+    AttendanceStatistics:
+      description: Describes attendance metrics for a webinar session.
+      required:
+      - registrantCount
+      - percentageAttendance
+      - averageInterestRating
+      - averageAttentiveness
+      - averageAttendanceTimeSeconds
+      properties:
+        registrantCount:
+          type: integer
+          format: int32
+          description: The number of registrations for the webinar
+        percentageAttendance:
+          type: number
+          format: float
+          description: The percentage of registrants that actually attended the webinar session
+        averageInterestRating:
+          type: number
+          format: float
+          description: Numerical value 1-100 (100 being most interested) indicating the average interest rating of the webinar attendees
+        averageAttentiveness:
+          type: number
+          format: float
+          description: Average based on the focus of the attendees Viewer during the webinar session
+        averageAttendanceTimeSeconds:
+          type: number
+          format: float
+          description: Average attendance time in seconds
+    Asset:
+      description: Describes a completed recordingasset.
+      required:
+      - name
+      - recordingAssetKey
+      - productName
+      - createTime
+      - creatorKey
+      - accountKey
+      - totalReferenceCount
+      - mp4DownloadUrl
+      properties:
+        name:
+          type: string
+          description: The name of the asset
+        recordingAssetKey:
+          type: string
+          description: The unique identifier for the recording asset
+        productName:
+          type: string
+          description: The product with which the asset was originally created
+        createTime:
+          type: string
+          format: date-time
+          description: The create time of the asset
+        creatorKey:
+          type: string
+          description: The key of the creator
+        accountKey:
+          type: string
+          description: The key of the account
+        totalReferenceCount:
+          type: integer
+          format: int32
+          description: The total number of references of the asset across products
+        mp4DownloadUrl:
+          type: string
+          description: The url to download recording assets video
+        transcriptDownloadUrl:
+          type: string
+          description: The url to download the transcript for the given recording video, available only if the transcript was generated
+        recordingShareUrl:
+          type: string
+          description: The share link for recording
+        webinarKey:
+          type: string
+          description: The webinarKey of parent webinar for which this online recordings was created, not available for uploaded recordings
+    WebinarReqUpdate:
+      description: Describes the details of the webinar
+      properties:
+        subject:
+          type: string
+          description: The name/subject of the webinar (128 characters maximum)
+        description:
+          type: string
+          description: A description of the webinar (2048 characters maximum)
+        times:
+          description: Array with start and end time(s) for webinar
+          type: array
+          items:
+            $ref: '#/components/schemas/DateTimeRange'
+        timeZone:
+          type: string
+          description: 'The time zone where the webinar is taking place (must be a valid time zone ID). If this parameter is not passed, the timezone of the organizer''s profile will be used
+
+            '
+        locale:
+          type: string
+          enum:
+          - en_US
+          - de_DE
+          - es_ES
+          - fr_FR
+          - it_IT
+          - zh_CN
+          description: The webinar language
+        emailSettings:
+          $ref: '#/components/schemas/WebinarEmailSettings'
+    ReportingAttendees:
+      description: ''
+      required:
+      - attendeeParticipationResponses
+      properties:
+        attendeeParticipationResponses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportingAttendee'
+    page:
+      required:
+      - size
+      - totalElements
+      - totalPages
+      - number
+      properties:
+        size:
+          type: integer
+          format: int32
+          description: The page size
+        totalElements:
+          type: integer
+          format: int32
+          description: The total elements
+        totalPages:
+          type: integer
+          format: int32
+          description: The pages count
+        number:
+          type: integer
+          format: int32
+          description: The current page number. The first page is 0
+    CallNumbers:
+      description: Conference call numbers per country.
+      required:
+      - accessCodes
+      - toll
+      properties:
+        accessCodes:
+          $ref: '#/components/schemas/AccessCodes'
+        toll:
+          type: string
+          description: Conference number for toll calls.
+        tollFree:
+          type: string
+          description: Conference number for toll-free calls.
+    AudioUpdate:
+      description: Defines the audio/conferencing settings for the specified webinar
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/AudioType'
+        pstnInfo:
+          $ref: '#/components/schemas/PstnInfoUpdate'
+        privateInfo:
+          $ref: '#/components/schemas/PrivateInfoUpdate'
+    Attendance:
+      description: Describes the times the attendee joined and left a webinar session.
+      required:
+      - joinTime
+      - leaveTime
+      properties:
+        joinTime:
+          type: string
+          format: date-time
+          description: The time the attendee joined a webinar session
+        leaveTime:
+          type: string
+          format: date-time
+          description: The time the attendee left a webinar session
+    CoorganizerDetails:
+      description: Email address and the organizerKey of the coorganizer
+      required:
+      - email
+      - organizerKey
+      properties:
+        email:
+          type: string
+          description: The email address of the coorganizer
+        organizerKey:
+          type: integer
+          format: int64
+          description: The key of the webinar coorganizer
+    ReportingWebinars:
+      description: ''
+      required:
+      - webinars
+      properties:
+        webinars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webinar'
   securitySchemes:
-    oauth2:
+    OAuth2:
       type: oauth2
+      description: 'To use this API, you _must_ provide an OAuth Token that has been requested from LogMeIn OAuth Authorization Server. See https://goto-developer.logmeininc.com/how-get-access-token-and-organizer-key for documentation about how to use LogMeIn’s OAuth.
+
+        '
+      in: header
+      name: Authorization
+      scheme: Bearer
       flows:
+        password:
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token
         authorizationCode:
           authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
           tokenUrl: https://authentication.logmeininc.com/oauth/token
-          scopes: {}
+          refreshUrl: https://authentication.logmeininc.com/oauth/token

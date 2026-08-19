@@ -1,0 +1,133 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/_original/goto-webinar-openapi.yml
+searched:
+- https://identity.goto.com/.well-known/oauth-authorization-server
+- https://www.goto.com/company/trust/security-measures
+- https://developer.goto.com/guides/References/Ref-Rate-Limits/
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    GoTo publishes a complete OpenAPI 3.0.0 document for the GoTo Webinar v2
+    REST API (39 paths, 53 operations, 87 component schemas, every operation
+    carrying an operationId, summary, description and tag), served from the
+    developer portal's own data layer at
+    https://developer.goto.com/page-data/GoToWebinarV2/page-data.json.
+- id: oauth2
+  conforms: true
+  evidence: >-
+    components.securitySchemes.OAuth2 declares type oauth2 with authorizationCode
+    and password flows; every operation is secured by it.
+- id: rfc8414-oauth-authorization-server-metadata
+  conforms: true
+  evidence: >-
+    https://identity.goto.com/.well-known/oauth-authorization-server returns 200
+    with a valid RFC 8414 document (issuer, authorization_endpoint,
+    token_endpoint, jwks_uri, introspection_endpoint, revocation_endpoint,
+    response_types_supported, grant_types_supported,
+    token_endpoint_auth_methods_supported, code_challenge_methods_supported).
+- id: rfc7636-pkce
+  conforms: true
+  evidence: 'Authorization server metadata declares code_challenge_methods_supported: [S256].'
+- id: rfc7662-token-introspection
+  conforms: true
+  evidence: 'Authorization server metadata declares introspection_endpoint https://identity.goto.com/oauth/introspect.'
+- id: rfc7009-token-revocation
+  conforms: true
+  evidence: 'Authorization server metadata declares revocation_endpoint https://identity.goto.com/oauth/revoke.'
+- id: openid-connect
+  conforms: false
+  evidence: >-
+    No /.well-known/openid-configuration on any GoTo host (identity.goto.com,
+    authentication.logmeininc.com, api.getgo.com, www.goto.com all 404). The
+    metadata document declares response_types_supported [code] only and no
+    id_token — this is plain OAuth 2.0, not OIDC.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No response in the spec declares application/problem+json. All 155 declared
+    4xx responses carry a description string with no schema or content.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: '/.well-known/security.txt returned 404 on every GoTo host probed.'
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: >-
+    No Sunset or Deprecation header support is documented and no operation is
+    flagged deprecated in the spec.
+- id: rfc9331-ratelimit-headers
+  conforms: false
+  evidence: >-
+    No rate-limit response headers are documented (no RateLimit-*, no
+    X-RateLimit-*, no Retry-After); the published limit of 10 req/s is signalled
+    only by a 429 status, and 429 is not declared on any operation.
+- id: idempotency-key
+  conforms: false
+  evidence: >-
+    No Idempotency-Key (or equivalent) parameter exists on any of the 53
+    operations and no retry-safety contract is documented.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    Five webhook events are documented in prose with field tables, but no
+    AsyncAPI document, JSON Schema or CloudEvents envelope is published. See
+    asyncapi/goto-webinar-webhooks.yml.
+- id: cloudevents
+  conforms: false
+  evidence: >-
+    Webhook payloads use GoTo's own envelope (eventName / eventVersion /
+    product / eventKey / timestamp), not the CloudEvents attribute set.
+- id: hal
+  conforms: partial
+  evidence: >-
+    The reporting collections return `_embedded` and `_links` with self/first/last
+    hrefs plus a `page` metadata block — HAL-shaped, though the spec never claims
+    HAL and the registrant collection uses an incompatible flat envelope.
+- id: json-api
+  conforms: false
+  evidence: No JSON:API media type, document structure or conventions are used.
+- id: scim
+  conforms: false
+  evidence: >-
+    Not applicable to the webinar surface. GoTo publishes a separate SCIM API in
+    the Developer Center for user provisioning; it is not part of GoTo Webinar v2.
+- id: soc2
+  conforms: true
+  evidence: >-
+    "we conduct SOC 2 (type II) audits, and share out a SOC 3 report" —
+    https://www.goto.com/company/trust/security-measures. Portfolio-level; GoTo
+    directs readers to the specific product page for applicability.
+  see: security/goto-webinar-trust-center.yml
+- id: bsi-c5
+  conforms: true
+  evidence: 'C5 is listed among GoTo''s third-party security certifications on the Trust Center security page.'
+  see: security/goto-webinar-trust-center.yml
+- id: gdpr
+  conforms: partial
+  evidence: >-
+    GoTo publishes a Data Processing Addendum, Sub-Processor Disclosures,
+    Technical and Organizational Measures and EU Data Act documentation per
+    product, including a dedicated "GoTo Webinar & GoTo Stage" compliance pack
+    at https://www.goto.com/company/trust/compliance. Recorded as partial
+    because the documents themselves are gated behind product resource pages
+    and were not read.
+- id: iso-27001
+  conforms: unknown
+  evidence: >-
+    Not named on GoTo's Trust Center security page. Only SOC 2, SOC 3 and C5 are
+    listed. Recorded as unknown rather than false because GoTo says
+    certifications vary per product.
+- id: pci-dss
+  conforms: unknown
+  evidence: >-
+    Not named on the Trust Center. The Complete plan accepts payments for paid
+    events, so a payment-processing posture exists, but GoTo publishes no PCI
+    claim for it.
+- id: hipaa
+  conforms: partial
+  evidence: >-
+    GoTo publishes a Business Associate Addendum at
+    https://www.goto.com/company/legal/business-associate-addendum, which
+    implies BAA availability. No HIPAA certification claim is made for GoTo
+    Webinar specifically.

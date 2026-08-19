@@ -1,0 +1,389 @@
+openapi: 3.2.0
+info:
+  title: GoTo Webinar 2.0 REST Recording Assets API
+  description: 'We recommend you use the v2 of this API. If you are still using v1, you can access [v1 documentation](/GoToWebinarV1).
+
+
+    ### Authentication Scopes
+
+    `collab:` must be used when a token is requested from the Authentication API.
+
+
+    # GoTo Webinar API Overview
+
+    Use the GoTo Webinar API to:
+
+    - Schedule webinars of one or more sessions
+
+    - Tailor your webinars with panelists, polls, questions and surveys
+
+    - Accept registrations
+
+    - Manage registrants and, once the webinar starts, attendees
+
+    - View data about historical and future webinars, registrants and attendees
+
+
+    Refer to GoTo Webinar product documentation to review the webinar types and product functionality.
+
+
+    Review call bodies and example call bodies in the API calls for alternate usage.
+
+
+    Note: Both userKey and organizerKey used in the APIs contain the same value
+
+
+    ## Getting Started
+
+    1. [Register](/guides/Get%20Started/01_HOW_developerAccount) for a developer account.
+
+    2. Create an [OAuth client](/guides/Get%20Started/02_HOW_createClient) and include the product(s) you plan to develop with.
+
+    3. Obtain a product account as needed. Trial versions will work, but last only 30 days. We recommend a full-featured account, preferably with an Admin role.
+
+    4. Request an [Access Token](/guides/Authentication/03_HOW_accessToken) to make API calls.
+
+    5. Make your first API calls. You can use cURL, Postman, or other API interfaces to make calls.
+
+    '
+  version: 2.0.0
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- OAuth2: []
+tags:
+- name: RecordingAssets
+  description: Operations available for assets of a given organizer.
+paths:
+  /recordingassets/search:
+    post:
+      tags:
+      - RecordingAssets
+      operationId: searchAssets
+      summary: Search for completed recording assets
+      description: "Allows search for a completed recording asset.\n\n### Example Interaction with curl\n\nThe default request is represented below, that excludes the `includes` query parameter.\nYou will get the `mp4DownloadUrl` and `transcriptUrl` by default in the response if they exist. \nThe `recordingShareUrl` and `webinarKey` fields will not be included.\n\n```\ncurl --request PUT 'https://api.getgo.com/G2W/rest/v2/recordingassets/search?page={page}&size={size}' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n     \"accountKey\": \"123456\",\n     \"sortField\": \"CREATETIME\",\n     \"sortOrder\": \"DESC\"\n}'\n\n```\nBy adding the `includes` query parameter has shown below, you'll get\nthe `recordingShareUrl` and `webinarKey` fields in the response.\n\n```\ncurl --request PUT 'https://api.getgo.com/G2W/rest/v2/recordingassets/search?page={page}&size={size}&includes=recordingShareUrl%2CwebinarKey' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n      \"accountKey\": \"123456\",\n      \"sortField\": \"CREATETIME\",\n      \"sortOrder\": \"DESC\"\n    }'\n ```\n"
+      parameters:
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      - $ref: '#/components/parameters/includes'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetsSearchReq'
+        description: The asset search parameters
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetsResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/recordingassets/search',\n  params: {\n    page: 'SOME_INTEGER_VALUE',\n    size: 'SOME_INTEGER_VALUE',\n    includes: 'SOME_ARRAY_VALUE'\n  },\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    accountKey: 'string',\n    name: 'string',\n    sortField: 'CREATETIME',\n    sortOrder: 'DESC'\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url 'https://api.getgo.com/G2W/rest/v2/recordingassets/search?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE&includes=SOME_ARRAY_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"accountKey\":\"string\",\"name\":\"string\",\"sortField\":\"CREATETIME\",\"sortOrder\":\"DESC\"}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"accountKey\\\":\\\"string\\\",\\\"name\\\":\\\"string\\\",\\\"sortField\\\":\\\"CREATETIME\\\",\\\"sortOrder\\\":\\\"DESC\\\"}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/recordingassets/search?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE&includes=SOME_ARRAY_VALUE\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"accountKey\":\"string\",\"name\":\"string\",\"sortField\":\"CREATETIME\",\"sortOrder\":\"DESC\"}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/recordingassets/search');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setQuery(new http\\QueryString([\n  'page' => 'SOME_INTEGER_VALUE',\n  'size' => 'SOME_INTEGER_VALUE',\n  'includes' => 'SOME_ARRAY_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/recordingassets/search?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE&includes=SOME_ARRAY_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"accountKey\":\"string\",\"name\":\"string\",\"sortField\":\"CREATETIME\",\"sortOrder\":\"DESC\"}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /accounts/{accountKey}/recordingassets/search:
+    post:
+      tags:
+      - RecordingAssets
+      operationId: searchAssetsForAdmin
+      summary: Search for completed recording assets of an admin user
+      description: "Allows search for a completed recording asset for an admin user. The authorization token must represent an admin.\n\n### Example Interaction with curl\n\nThe default request is represented below, that excludes the `includes` query parameter.\nYou will get the `mp4DownloadUrl` and `transcriptUrl` by default in the response if they exist.\nThe `recordingShareUrl` and `webinarKey` fields will not be included.\n\n```\ncurl --request POST 'https://api.getgo.com/G2W/rest/v2/accounts/{accountKey}/recordingassets/search?page={page}&size={size}' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n      \"name\": \"Test\"\n      \"organizerKey\": \"123456\",\n      \"sortField\": \"CREATETIME\",\n      \"sortOrder\": \"DESC\",\n      \"fromTime\":\"2021-01-01T00:00:00Z\",\n      \"toTime\":\"2022-02-02T06:36:02.352Z\"\n    }'\n\n```\nBy adding the `includes` query parameter has shown below, you'll get\nthe `recordingShareUrl` and `webinarKey` fields in the response.\n\n```\ncurl --request POST 'https://api.getgo.com/G2W/rest/v2/accounts/{accountKey}/recordingassets/search?page={page}&size={size}&includes=recordingShareUrl%2CwebinarKey' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n      \"name\": \"Test\"\n      \"organizerKey\": \"123456\",\n      \"sortField\": \"CREATETIME\",\n      \"sortOrder\": \"DESC\",\n      \"fromTime\":\"2021-01-01T00:00:00Z\",\n      \"toTime\":\"2022-02-02T06:36:02.352Z\"\n    }'\n ```\n"
+      parameters:
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      - $ref: '#/components/parameters/includes'
+      - $ref: '#/components/parameters/accountKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetsSearchRequestForAdmin'
+        description: The asset search parameters
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetsResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden or oauth scope is invalid
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/recordingassets/search',\n  params: {\n    page: 'SOME_INTEGER_VALUE',\n    size: 'SOME_INTEGER_VALUE',\n    includes: 'SOME_ARRAY_VALUE'\n  },\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    organizerKey: 'string',\n    name: 'string',\n    sortField: 'CREATETIME',\n    sortOrder: 'DESC',\n    fromTime: 'string',\n    toTime: 'string'\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url 'https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/recordingassets/search?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE&includes=SOME_ARRAY_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"organizerKey\":\"string\",\"name\":\"string\",\"sortField\":\"CREATETIME\",\"sortOrder\":\"DESC\",\"fromTime\":\"string\",\"toTime\":\"string\"}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"organizerKey\\\":\\\"string\\\",\\\"name\\\":\\\"string\\\",\\\"sortField\\\":\\\"CREATETIME\\\",\\\"sortOrder\\\":\\\"DESC\\\",\\\"fromTime\\\":\\\"string\\\",\\\"toTime\\\":\\\"string\\\"}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/accounts/%7BaccountKey%7D/recordingassets/search?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE&includes=SOME_ARRAY_VALUE\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"organizerKey\":\"string\",\"name\":\"string\",\"sortField\":\"CREATETIME\",\"sortOrder\":\"DESC\",\"fromTime\":\"string\",\"toTime\":\"string\"}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/recordingassets/search');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setQuery(new http\\QueryString([\n  'page' => 'SOME_INTEGER_VALUE',\n  'size' => 'SOME_INTEGER_VALUE',\n  'includes' => 'SOME_ARRAY_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/accounts/%7BaccountKey%7D/recordingassets/search?page=SOME_INTEGER_VALUE&size=SOME_INTEGER_VALUE&includes=SOME_ARRAY_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"organizerKey\":\"string\",\"name\":\"string\",\"sortField\":\"CREATETIME\",\"sortOrder\":\"DESC\",\"fromTime\":\"string\",\"toTime\":\"string\"}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+components:
+  schemas:
+    Assets:
+      description: ''
+      required:
+      - recordingAssets
+      properties:
+        recordingAssets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+    Asset:
+      description: Describes a completed recordingasset.
+      required:
+      - name
+      - recordingAssetKey
+      - productName
+      - createTime
+      - creatorKey
+      - accountKey
+      - totalReferenceCount
+      - mp4DownloadUrl
+      properties:
+        name:
+          type: string
+          description: The name of the asset
+        recordingAssetKey:
+          type: string
+          description: The unique identifier for the recording asset
+        productName:
+          type: string
+          description: The product with which the asset was originally created
+        createTime:
+          type: string
+          format: date-time
+          description: The create time of the asset
+        creatorKey:
+          type: string
+          description: The key of the creator
+        accountKey:
+          type: string
+          description: The key of the account
+        totalReferenceCount:
+          type: integer
+          format: int32
+          description: The total number of references of the asset across products
+        mp4DownloadUrl:
+          type: string
+          description: The url to download recording assets video
+        transcriptDownloadUrl:
+          type: string
+          description: The url to download the transcript for the given recording video, available only if the transcript was generated
+        recordingShareUrl:
+          type: string
+          description: The share link for recording
+        webinarKey:
+          type: string
+          description: The webinarKey of parent webinar for which this online recordings was created, not available for uploaded recordings
+    AssetsResponse:
+      description: Describes a list of completed assets
+      required:
+      - _embedded
+      - page
+      properties:
+        _embedded:
+          $ref: '#/components/schemas/Assets'
+        page:
+          $ref: '#/components/schemas/page'
+    AssetsSearchRequestForAdmin:
+      description: Describes the details used to search a completed recordingasset.
+      required:
+      - organizerKey
+      properties:
+        organizerKey:
+          type: string
+          description: The key of the organizer
+        name:
+          type: string
+          description: The name of the recordingasset
+        sortField:
+          type: string
+          description: Sorts on the specified field. The default value is 'CREATETIME'. The possible values are 'CREATETIME' and 'NAME'.
+          default: CREATETIME
+        sortOrder:
+          description: Specifies the sort order type. The default value is 'DESC'. The possible values are 'DESC', 'ASC'.
+          type: string
+          default: DESC
+        fromTime:
+          description: Specifies the time from which the recordings should be included. Date should be in ISO format.
+          type: string
+        toTime:
+          description: Specifies the time till which the recordings should be included. Date should be in ISO format.
+          type: string
+    page:
+      required:
+      - size
+      - totalElements
+      - totalPages
+      - number
+      properties:
+        size:
+          type: integer
+          format: int32
+          description: The page size
+        totalElements:
+          type: integer
+          format: int32
+          description: The total elements
+        totalPages:
+          type: integer
+          format: int32
+          description: The pages count
+        number:
+          type: integer
+          format: int32
+          description: The current page number. The first page is 0
+    AssetsSearchReq:
+      description: Describes the details used to search a completed recordingasset.
+      required:
+      - accountKey
+      properties:
+        accountKey:
+          type: string
+          description: The key of the account
+        name:
+          type: string
+          description: The name of the recordingasset
+        sortField:
+          type: string
+          description: Sorts on the specified field. The default value is 'CREATETIME'. The possible values are 'CREATETIME' and 'NAME'.
+          default: CREATETIME
+        sortOrder:
+          description: Specifies the sort order type. The default value is 'DESC'. The possible values are 'DESC', 'ASC'.
+          type: string
+          default: DESC
+  parameters:
+    accountKey:
+      name: accountKey
+      in: path
+      description: The key of the account
+      required: true
+      schema:
+        type: integer
+        format: int64
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number to be displayed. The first page is 0.
+      schema:
+        type: integer
+        format: int64
+    size:
+      name: size
+      in: query
+      required: false
+      description: The size of the page.
+      schema:
+        type: integer
+        format: int64
+        maximum: 200
+    includes:
+      name: includes
+      in: query
+      required: false
+      description: Add the response variables.
+      schema:
+        type: array
+        collectionFormat: csv
+        items:
+          type: string
+          enum:
+          - recordingShareUrl
+          - webinarKey
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'To use this API, you _must_ provide an OAuth Token that has been requested from LogMeIn OAuth Authorization Server. See https://goto-developer.logmeininc.com/how-get-access-token-and-organizer-key for documentation about how to use LogMeIn’s OAuth.
+
+        '
+      in: header
+      name: Authorization
+      scheme: Bearer
+      flows:
+        password:
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token

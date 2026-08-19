@@ -1,142 +1,879 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: GoTo Webinar REST API v2 Attendees Registrants API
-  description: Best-effort OpenAPI 3.1 for the GoTo Webinar (formerly GoToWebinar / Citrix) v2 REST API. Webinars, sessions, registrants, attendees, polls, questions, and panelists for organizer-scoped requests. Authentication is OAuth 2.0 via GoTo's identity service.
-  version: '2.0'
+  title: GoTo Webinar 2.0 REST Registrants API
+  description: 'We recommend you use the v2 of this API. If you are still using v1, you can access [v1 documentation](/GoToWebinarV1).
+
+
+    ### Authentication Scopes
+
+    `collab:` must be used when a token is requested from the Authentication API.
+
+
+    # GoTo Webinar API Overview
+
+    Use the GoTo Webinar API to:
+
+    - Schedule webinars of one or more sessions
+
+    - Tailor your webinars with panelists, polls, questions and surveys
+
+    - Accept registrations
+
+    - Manage registrants and, once the webinar starts, attendees
+
+    - View data about historical and future webinars, registrants and attendees
+
+
+    Refer to GoTo Webinar product documentation to review the webinar types and product functionality.
+
+
+    Review call bodies and example call bodies in the API calls for alternate usage.
+
+
+    Note: Both userKey and organizerKey used in the APIs contain the same value
+
+
+    ## Getting Started
+
+    1. [Register](/guides/Get%20Started/01_HOW_developerAccount) for a developer account.
+
+    2. Create an [OAuth client](/guides/Get%20Started/02_HOW_createClient) and include the product(s) you plan to develop with.
+
+    3. Obtain a product account as needed. Trial versions will work, but last only 30 days. We recommend a full-featured account, preferably with an Admin role.
+
+    4. Request an [Access Token](/guides/Authentication/03_HOW_accessToken) to make API calls.
+
+    5. Make your first API calls. You can use cURL, Postman, or other API interfaces to make calls.
+
+    '
+  version: 2.0.0
 servers:
 - url: https://api.getgo.com/G2W/rest/v2
 security:
-- oauth2: []
+- OAuth2: []
 tags:
 - name: Registrants
+  description: Operations available for registrants of a given webinar.
 paths:
   /organizers/{organizerKey}/webinars/{webinarKey}/registrants:
-    get:
-      tags:
-      - Registrants
-      summary: List registrants
-      operationId: listRegistrants
-      parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
-      responses:
-        '200':
-          description: Registrants
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Registrant'
     post:
       tags:
       - Registrants
-      summary: Create a registrant
       operationId: createRegistrant
+      summary: Create registrant
+      description: 'Register an attendee for a scheduled webinar. The response contains the registrantKey and join URL for the registrant. An email will be sent to the registrant unless the organizer turns off the confirmation email setting from the GoTo Webinar website. Please note that you must provide all required fields including custom fields defined during the webinar creation. Use the API call ''Get registration fields'' to get a list of all fields, if they are required, and their possible values. At this time there are two versions of the ''Create Registrant'' call. The first version only accepts firstName, lastName, and email and ignores all other fields. If you have custom fields or want to capture additional information this version won''t work for you. The second version allows you to pass all required and optional fields, including custom fields defined when creating the webinar. To use the second version you must pass the Accept header value as ''application/json'' instead of ''application/vnd.citrix.g2wapi-v1.1+json.
+
+        '
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
-      - in: query
-        name: resendConfirmation
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - name: Accept
+        in: header
+        description: 'Set to ''application/json'' to make a registration using fields (custom or default) additional to the basic ones or set it to ''application/vnd.citrix.g2wapi-v1.1+json'' for just basic fields(firstName, lastName, and email).
+
+          '
+        required: false
+        schema:
+          type: string
+      - name: resendConfirmation
+        in: query
+        description: Indicates whether the confirmation email should be resent when a registrant is re-registered. The default value is false.
+        required: false
         schema:
           type: boolean
-          default: false
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Registrant'
+              $ref: '#/components/schemas/RegistrantFields'
+        description: The registrant details. To get all possible values run the API call 'Get registration fields' which is also part of this documentation.
+        required: true
       responses:
         '201':
-          description: Registered
+          description: Created
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  registrantKey:
-                    type: string
-                  joinUrl:
-                    type: string
-  /organizers/{organizerKey}/webinars/{webinarKey}/registrants/{registrantKey}:
+                $ref: '#/components/schemas/RegistrantCreated'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '409':
+          description: The user is already registered
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants',\n  params: {resendConfirmation: 'SOME_BOOLEAN_VALUE'},\n  headers: {\n    Accept: 'SOME_STRING_VALUE',\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {\n    firstName: 'string',\n    lastName: 'string',\n    email: 'string',\n    source: 'string',\n    address: 'string',\n    city: 'string',\n    state: 'string',\n    zipCode: 'string',\n    country: 'string',\n    phone: 'string',\n    organization: 'string',\n    jobTitle: 'string',\n    questionsAndComments: 'string',\n    industry: 'string',\n    numberOfEmployees: 'string',\n    purchasingTimeFrame: 'string',\n    purchasingRole: 'string',\n    responses: [{questionKey: 0, responseText: 'string', answerKey: 0}]\n  }\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants?resendConfirmation=SOME_BOOLEAN_VALUE' \\\n  --header 'Accept: SOME_STRING_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"firstName\":\"string\",\"lastName\":\"string\",\"email\":\"string\",\"source\":\"string\",\"address\":\"string\",\"city\":\"string\",\"state\":\"string\",\"zipCode\":\"string\",\"country\":\"string\",\"phone\":\"string\",\"organization\":\"string\",\"jobTitle\":\"string\",\"questionsAndComments\":\"string\",\"industry\":\"string\",\"numberOfEmployees\":\"string\",\"purchasingTimeFrame\":\"string\",\"purchasingRole\":\"string\",\"responses\":[{\"questionKey\":0,\"responseText\":\"string\",\"answerKey\":0}]}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"firstName\\\":\\\"string\\\",\\\"lastName\\\":\\\"string\\\",\\\"email\\\":\\\"string\\\",\\\"source\\\":\\\"string\\\",\\\"address\\\":\\\"string\\\",\\\"city\\\":\\\"string\\\",\\\"state\\\":\\\"string\\\",\\\"zipCode\\\":\\\"string\\\",\\\"country\\\":\\\"string\\\",\\\"phone\\\":\\\"string\\\",\\\"organization\\\":\\\"string\\\",\\\"jobTitle\\\":\\\"string\\\",\\\"questionsAndComments\\\":\\\"string\\\",\\\"industry\\\":\\\"string\\\",\\\"numberOfEmployees\\\":\\\"string\\\",\\\"purchasingTimeFrame\\\":\\\"string\\\",\\\"purchasingRole\\\":\\\"string\\\",\\\"responses\\\":[{\\\"questionKey\\\":0,\\\"responseText\\\":\\\"string\\\",\\\"answerKey\\\":0}]}\"\n\nheaders = {\n    'Accept': \"SOME_STRING_VALUE\",\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants?resendConfirmation=SOME_BOOLEAN_VALUE\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"firstName\":\"string\",\"lastName\":\"string\",\"email\":\"string\",\"source\":\"string\",\"address\":\"string\",\"city\":\"string\",\"state\":\"string\",\"zipCode\":\"string\",\"country\":\"string\",\"phone\":\"string\",\"organization\":\"string\",\"jobTitle\":\"string\",\"questionsAndComments\":\"string\",\"industry\":\"string\",\"numberOfEmployees\":\"string\",\"purchasingTimeFrame\":\"string\",\"purchasingRole\":\"string\",\"responses\":[{\"questionKey\":0,\"responseText\":\"string\",\"answerKey\":0}]}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setQuery(new http\\QueryString([\n  'resendConfirmation' => 'SOME_BOOLEAN_VALUE'\n]));\n\n$request->setHeaders([\n  'Accept' => 'SOME_STRING_VALUE',\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants?resendConfirmation=SOME_BOOLEAN_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Accept"] = ''SOME_STRING_VALUE''
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"firstName\":\"string\",\"lastName\":\"string\",\"email\":\"string\",\"source\":\"string\",\"address\":\"string\",\"city\":\"string\",\"state\":\"string\",\"zipCode\":\"string\",\"country\":\"string\",\"phone\":\"string\",\"organization\":\"string\",\"jobTitle\":\"string\",\"questionsAndComments\":\"string\",\"industry\":\"string\",\"numberOfEmployees\":\"string\",\"purchasingTimeFrame\":\"string\",\"purchasingRole\":\"string\",\"responses\":[{\"questionKey\":0,\"responseText\":\"string\",\"answerKey\":0}]}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
     get:
       tags:
       - Registrants
-      summary: Get a registrant
-      operationId: getRegistrant
+      operationId: getAllRegistrantsForWebinar
+      summary: Get registrants
+      description: 'Retrieve registration details for all registrants of a specific webinar. Registrant details will not include all fields captured when creating the registrant. To see all data, use the API call ''Get Registrant''. Registrants can have one of the following states; WAITING - registrant registered and is awaiting approval (where organizer has required approval), APPROVED - registrant registered and is approved, and DENIED - registrant registered and was denied. We have pagination support for this API now. When you pass the page or limit parameter the response will follow RegistrantPaginatedResponse schema but without these params response will be in RegistrantArray schema as before
+
+        '
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
-      - in: path
-        name: registrantKey
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/limit'
       responses:
         '200':
-          description: Registrant
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/RegistrantArray'
+                - $ref: '#/components/schemas/RegistrantPaginatedResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants',\n  params: {page: 'SOME_INTEGER_VALUE', limit: 'SOME_INTEGER_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants?page=SOME_INTEGER_VALUE&limit=SOME_INTEGER_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants?page=SOME_INTEGER_VALUE&limit=SOME_INTEGER_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'page' => 'SOME_INTEGER_VALUE',\n  'limit' => 'SOME_INTEGER_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants?page=SOME_INTEGER_VALUE&limit=SOME_INTEGER_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/registrants/{registrantKey}:
     delete:
       tags:
       - Registrants
-      summary: Delete a registrant
       operationId: deleteRegistrant
+      summary: Delete registrant
+      description: Removes a webinar registrant from current registrations for the specified webinar. The webinar must be a scheduled, future webinar.
       parameters:
-      - $ref: '#/components/parameters/OrganizerKey'
-      - $ref: '#/components/parameters/WebinarKey'
-      - in: path
-        name: registrantKey
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - $ref: '#/components/parameters/registrantKey'
       responses:
         '204':
-          description: Deleted
+          description: No content
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'DELETE',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request DELETE \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("DELETE", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D');\n$request->setRequestMethod('DELETE');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Delete.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    get:
+      tags:
+      - Registrants
+      operationId: getRegistrant
+      summary: Get registrant
+      description: Retrieve registration details for a specific registrant.
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - $ref: '#/components/parameters/registrantKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrantDetailed'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/%7BregistrantKey%7D")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/registrants/fields:
+    get:
+      tags:
+      - Registrants
+      operationId: getRegistrationFields
+      summary: Get registration fields
+      description: Retrieve required, optional registration, and custom questions for a specified webinar.
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationFields'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/fields',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/fields \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/fields", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/fields');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/registrants/fields")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
 components:
   schemas:
-    Registrant:
-      type: object
+    RegistrantArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/Registrant'
+    RegistrationField:
+      description: Describes a field for a webinar registration.
+      required:
+      - field
+      - required
+      - maxSize
       properties:
-        registrantKey:
+        field:
           type: string
-        firstName:
+          description: The name of the registration field
+        answers:
+          type: array
+          items:
+            type: string
+          description: List of choices for a multiple choice registration field
+        required:
+          type: boolean
+          description: Indicates whether the custom registration field is compulsory
+        maxSize:
+          type: integer
+          format: int32
+          description: The character size of the custom registration field (max 128)
+    RegistrationAnswer:
+      description: Describes an answer to a multiple choice custom registration field.
+      required:
+      - answer
+      - answerKey
+      properties:
+        answer:
           type: string
+          description: The answer value
+        answerKey:
+          type: integer
+          format: int64
+          description: The answer key
+    Registrant:
+      description: Describes a webinar registrant
+      required:
+      - lastName
+      - email
+      - firstName
+      - registrantKey
+      - registrationDate
+      - status
+      - joinUrl
+      - timeZone
+      properties:
         lastName:
           type: string
+          description: The registrant's last name
         email:
           type: string
-          format: email
+          description: The registrant's email address
+        firstName:
+          type: string
+          description: The registrant's first name
+        registrantKey:
+          type: integer
+          format: int64
+          description: The registrant's key
         registrationDate:
           type: string
           format: date-time
-        joinUrl:
-          type: string
-        timeZone:
-          type: string
+          description: The registration date and time
         status:
           type: string
           enum:
           - APPROVED
           - DENIED
           - WAITING
+          description: The registration status
+        joinUrl:
+          type: string
+          description: The URL the registrant will use to join the webinar
+        timeZone:
+          type: string
+          description: The time zone where the webinar will take place
+    RegistrantQAResponse:
+      description: 'Describes a completed registration question for a webinar registrant. If you use "Multiple choice" questions the response contains the numeric answerKey, otherwise the answer text.
+
+        '
+      required:
+      - questionKey
+      properties:
+        questionKey:
+          type: integer
+          format: int64
+          description: The unique key of the question
+        responseText:
+          type: string
+          description: Answer of the question.
+        answerKey:
+          type: integer
+          format: int64
+          description: The numeric key of the answer to a multiple-choice question.
+    RegistrationFields:
+      description: The fields to be completed on the webinar registration form.
+      required:
+      - questions
+      - fields
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegistrationQuestion'
+          description: Custom fields created by the organizer for the webinar registration form
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegistrationField'
+          description: The default fields the organizer has selected for the webinar registration form
+    RegistrantPaginatedResponse:
+      description: Describes a list of webinar sessions
+      required:
+      - data
+      - total
+      - page
+      - limit
+      - pageSize
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Registrant'
+        total:
+          type: integer
+          format: int32
+          description: The total elements
+        page:
+          type: integer
+          format: int32
+          description: The current page number. The first page is 0
+        limit:
+          type: integer
+          format: int32
+          description: The number of items per page
+        pageSize:
+          type: integer
+          format: int32
+          description: The actual number of items in the current page
+    RegistrantCreated:
+      description: Describes a newly created webinar registrant.
+      required:
+      - registrantKey
+      - joinUrl
+      properties:
+        registrantKey:
+          type: integer
+          format: int64
+          description: The registrant's key
+        joinUrl:
+          type: string
+          description: The URL the registrant will use to join the webinar.
+    RegistrantDetailed:
+      description: Detailed description of a webinar registrant with all registration fields.
+      required:
+      - firstName
+      - lastName
+      - email
+      - registrantKey
+      - registrationDate
+      - status
+      - joinUrl
+      - timeZone
+      properties:
+        lastName:
+          type: string
+          description: The registrant's last name
+        email:
+          type: string
+          description: The registrant's email address
+        firstName:
+          type: string
+          description: The registrant's first name
+        registrantKey:
+          type: integer
+          format: int64
+          description: The registrant's key
+        registrationDate:
+          type: string
+          format: date-time
+          description: The registration date and time
+        source:
+          type: string
+          description: The source that led to the registration. This can be any string like 'Newsletter 123' or 'Marketing campaign ABC'
+        status:
+          type: string
+          enum:
+          - APPROVED
+          - DENIED
+          - WAITING
+          description: The registration status
+        joinUrl:
+          type: string
+          description: The URL the registrant will use to join the webinar
+        timeZone:
+          type: string
+          description: The time zone where the webinar will take place
+        phone:
+          type: string
+          description: The registrant's phone
+        state:
+          type: string
+          description: The registrant's state (US only)
+        city:
+          type: string
+          description: The registrant's city
+        organization:
+          type: string
+          description: The registrant's organization
+        zipCode:
+          type: string
+          description: The registrant's zip (post) code
+        numberOfEmployees:
+          type: string
+          description: The size in employees of the registrant's organization
+        industry:
+          type: string
+          description: The type of industry the registrant's organization belongs to
+        jobTitle:
+          type: string
+          description: The registrant's job title
+        purchasingRole:
+          type: string
+          description: The registrant's role in purchasing the product
+        implementationTimeFrame:
+          type: string
+          description: The time frame within which the product will be purchased
+        purchasingTimeFrame:
+          type: string
+          description: The time frame within which the product will be purchased
+        questionsAndComments:
+          type: string
+          description: Any questions or comments the registrant made at the time of registration
+        employeeCount:
+          type: string
+          description: The size in employees of the registrant's organization
+        country:
+          type: string
+          description: The registrant's country
+        address:
+          type: string
+          description: The registrant's address
+        type:
+          type: string
+          description: The type is REGULAR for 'One session' and 'Sequence' webinars. The type LATE is for registrants registering for past webinars. For webinar series this parameter is not passed
+          enum:
+          - LATE
+          - REGULAR
+        unsubscribed:
+          type: boolean
+          description: Indicates whether the registrant opted-out from receiving other emails from this webinar's organizer
+        responses:
+          description: Responses to custom questions
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomAnswers'
+    RegistrantFields:
+      description: Detailed description of a all fields to register a registrant for a webinar.
+      required:
+      - firstName
+      - lastName
+      - email
+      properties:
+        firstName:
+          type: string
+          description: The registrant's first name
+        lastName:
+          type: string
+          description: The registrant's last name
+        email:
+          type: string
+          description: The registrant's email address
+        source:
+          type: string
+          description: The source that led to the registration. This can be any string like 'Newsletter 123' or 'Marketing campaign ABC'
+        address:
+          type: string
+          description: The registrant's address
+        city:
+          type: string
+          description: The registrant's city
+        state:
+          type: string
+          description: The registrant's state (US only)
+        zipCode:
+          type: string
+          description: The registrant's zip (post) code
+        country:
+          type: string
+          description: The registrant's country
+        phone:
+          type: string
+          description: The registrant's phone
+        organization:
+          type: string
+          description: The registrant's organization
+        jobTitle:
+          type: string
+          description: The registrant's job title
+        questionsAndComments:
+          type: string
+          description: Any questions or comments the registrant made at the time of registration
+        industry:
+          type: string
+          description: The type of industry the registrant's organization belongs to
+        numberOfEmployees:
+          type: string
+          description: The size in employees of the registrant's organization
+        purchasingTimeFrame:
+          type: string
+          description: The time frame within which the product will be purchased
+        purchasingRole:
+          type: string
+          description: The registrant's role in purchasing the product
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegistrantQAResponse'
+          description: Set the answers of all questions
+    CustomAnswers:
+      description: Answers to custom questions of the registrant
+      required:
+      - answer
+      - question
+      properties:
+        answer:
+          type: string
+          description: Answer to a custom question when registering
+        question:
+          type: string
+          description: Custom question for registering
+    RegistrationQuestion:
+      description: Describes a custom field for a webinar registration.
+      required:
+      - questionKey
+      - question
+      - required
+      - type
+      - maxSize
+      properties:
+        questionKey:
+          type: integer
+          format: int64
+          description: The unique key of the custom registration field
+        question:
+          type: string
+          description: The value (text) of the custom registration field
+        required:
+          type: boolean
+          description: Indicates whether the custom registration field is compulsory
+        type:
+          type: string
+          enum:
+          - multipleChoice
+          - shortAnswer
+          description: Indicates whether the custom registration field requires a single short answer or whether it is a multiple choice question
+        maxSize:
+          type: integer
+          format: int32
+          description: The character size of the custom registration field (max 1000)
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegistrationAnswer'
+          description: The answers to a multiple choice custom registration field
   parameters:
-    OrganizerKey:
+    page:
+      name: page
+      in: query
+      required: false
+      description: The page number to be displayed. The first page is 0.
+      schema:
+        type: integer
+        format: int64
+    registrantKey:
+      name: registrantKey
+      in: path
+      description: The key of the registrant
+      required: true
+      schema:
+        type: integer
+        format: int64
+    organizerKey:
       name: organizerKey
       in: path
+      description: The key of the organizer
       required: true
       schema:
-        type: string
-    WebinarKey:
+        type: integer
+        format: int64
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: The size of the page.
+      schema:
+        type: integer
+        format: int64
+        maximum: 200
+    webinarKey:
       name: webinarKey
       in: path
+      description: The key of the webinar
       required: true
       schema:
-        type: string
+        type: integer
+        format: int64
   securitySchemes:
-    oauth2:
+    OAuth2:
       type: oauth2
+      description: 'To use this API, you _must_ provide an OAuth Token that has been requested from LogMeIn OAuth Authorization Server. See https://goto-developer.logmeininc.com/how-get-access-token-and-organizer-key for documentation about how to use LogMeIn’s OAuth.
+
+        '
+      in: header
+      name: Authorization
+      scheme: Bearer
       flows:
+        password:
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token
         authorizationCode:
           authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
           tokenUrl: https://authentication.logmeininc.com/oauth/token
-          scopes: {}
+          refreshUrl: https://authentication.logmeininc.com/oauth/token

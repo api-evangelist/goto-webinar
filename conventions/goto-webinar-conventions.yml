@@ -1,0 +1,144 @@
+generated: '2026-08-13'
+method: searched
+source: openapi/_original/goto-webinar-openapi.yml
+docs:
+- https://developer.goto.com/GoToWebinarV2
+- https://developer.goto.com/guides/Authentication/03_HOW_accessToken/
+- https://developer.goto.com/guides/References/Ref-Rate-Limits/
+summary: >-
+  GoTo Webinar v2 is a conventional organizer-scoped REST API: bearer OAuth 2.0
+  tokens, JSON in and out, page/size pagination with a HAL-ish _links block on
+  the reporting collections, and bare HTTP status codes for errors. It has no
+  idempotency contract, no request-id tracing header, no rate-limit response
+  headers and no structured error envelope — the four things an agent most
+  needs at runtime are all absent.
+
+authentication:
+  style: oauth2-bearer
+  header: 'Authorization: Bearer <access_token>'
+  flows: [authorizationCode, password]
+  issuer: https://identity.goto.com
+  authorization_endpoint: https://identity.goto.com/oauth/authorize
+  token_endpoint: https://identity.goto.com/oauth/token
+  legacy_host: https://authentication.logmeininc.com
+  scope: 'collab:'
+  pkce: S256
+  note: >-
+    The OpenAPI still names authentication.logmeininc.com; the RFC 8414
+    metadata served at that host reports issuer https://identity.goto.com. Both
+    resolve to one authorization server. The `password` (Direct Login) flow is
+    declared in the spec but GoTo's SDK guides mark it deprecated — "All new
+    clients will not be able to use this API."
+  see: authentication/goto-webinar-authentication.yml
+
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    GoTo Webinar publishes NO idempotency contract. No Idempotency-Key (or
+    equivalent) parameter appears in any of the 53 operations in the
+    GoToWebinarV2 OpenAPI, and no docs page describes safe retry semantics. This
+    matters concretely: createRegistrant, createPanelists, createCoorganizers
+    and createWebinar are all unguarded POSTs, so a retry after a timeout risks
+    a duplicate registrant, panelist or webinar. createRegistrant does carry a
+    409 response, which implies server-side duplicate detection on the
+    registrant's email, but that is a uniqueness constraint rather than a
+    replayable idempotency key, and it is not documented as one. No Idempotency
+    pointer is emitted in apis.yml, because there is nothing to point at.
+
+pagination:
+  style: page-number
+  default_page: 0
+  params:
+  - {name: page, in: query, type: integer, description: 'The page number to be displayed. The first page is 0.'}
+  - {name: size, in: query, type: integer, description: 'The size of the page — number of items per page.'}
+  - {name: limit, in: query, type: integer, description: 'Item limit, used by the registrant paginated responses.'}
+  response_shapes:
+  - shape: hal-embedded
+    fields: ['_embedded', '_links.self.href', '_links.first.href', '_links.last.href', 'page.size', 'page.totalElements', 'page.totalPages', 'page.number']
+    used_by: [getAllAccountWebinars, getWebinars, getOrganizerSessions, getAllSessions, getAttendeesForAllWebinarSessions]
+    note: The reporting collections wrap results in an `_embedded` block with a `page` metadata object and first/self/last link hrefs.
+  - shape: flat-paginated
+    fields: [data, total, page, limit, pageSize]
+    used_by: [getAllRegistrantsForWebinar]
+    note: RegistrantPaginatedResponse uses a different, flatter envelope than the reporting collections — the two pagination shapes are not interchangeable.
+  inconsistency: >-
+    Two incompatible pagination envelopes coexist in one API version. A client
+    that learns `_embedded`/`page` from the webinars and sessions collections
+    will break on the registrants collection, which returns `data`/`total`/
+    `pageSize`. There is no cursor pagination anywhere.
+
+error_envelope:
+  format: none
+  problem_json: false
+  note: >-
+    Errors are signalled by HTTP status alone. Across all 53 operations the
+    declared error responses (400 x52, 403 x53, 404 x48, 409 x2) carry only a
+    `description` string — no schema, no content type, no example. Nothing in
+    the spec declares application/problem+json (RFC 9457) or any error body
+    shape, so an agent cannot programmatically read a reason for a failure. The
+    api.getgo.com host does return a JSON body of the form
+    {"errorCode":"NOT_FOUND","message":"..."} on unrouted paths, but that shape
+    is undocumented and unmodelled in the contract.
+  see: errors/goto-webinar-problem-types.yml
+
+rate_limit_signaling:
+  documented_limit: 10 requests per second
+  status_on_exhaustion: 429
+  response_headers: []
+  note: >-
+    No rate-limit headers are documented and no operation in the spec declares a
+    429 response. See rate-limits/goto-webinar-rate-limits.yml.
+  see: rate-limits/goto-webinar-rate-limits.yml
+
+request_tracing:
+  request_id_header: null
+  note: No correlation/request-id header is documented or declared in the spec.
+
+versioning:
+  scheme: uri-path
+  current: v2
+  base: https://api.getgo.com/G2W/rest/v2
+  previous: v1
+  note: >-
+    Version is pinned in the path segment. GoTo's own v2 reference opens with
+    "We recommend you use the v2 of this API. If you are still using v1, you can
+    access v1 documentation" — v1 remains documented at
+    https://developer.goto.com/GoToWebinarV1.
+  see: lifecycle/goto-webinar-lifecycle.yml
+
+content_negotiation:
+  request: application/json
+  response: application/json
+  note: >-
+    Only application/json appears in the contract (41 declared response bodies,
+    all JSON). Two operations take an explicit `Accept` header parameter.
+
+resource_scoping:
+  root: /organizers/{organizerKey}
+  account_root: /accounts/{accountKey}
+  note: >-
+    Almost every path is scoped under an organizerKey; a small admin surface is
+    scoped under accountKey. GoTo's reference notes "Both userKey and
+    organizerKey used in the APIs contain the same value", which is a real
+    identity gotcha for anyone wiring the two independently.
+
+field_expansion:
+  supported: partial
+  param: includes
+  note: >-
+    The recording-asset search operations accept an `includes` array parameter
+    (e.g. recordingShareUrl, webinarKey) to widen the returned projection. There
+    is no general sparse-fieldset or expand mechanism.
+
+metadata:
+  supported: false
+  note: No customer-defined metadata field is exposed on any resource.
+
+cross_links:
+  errors: errors/goto-webinar-problem-types.yml
+  lifecycle: lifecycle/goto-webinar-lifecycle.yml
+  authentication: authentication/goto-webinar-authentication.yml
+  rate_limits: rate-limits/goto-webinar-rate-limits.yml
+  scopes: scopes/goto-webinar-scopes.yml
+  webhooks: asyncapi/goto-webinar-webhooks.yml

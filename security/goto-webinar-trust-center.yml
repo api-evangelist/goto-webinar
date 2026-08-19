@@ -1,0 +1,48 @@
+generated: '2026-08-13'
+method: searched
+probe: true
+url: https://trust.goto.com/
+pages:
+- {url: 'https://trust.goto.com/', status: 200, name: GoTo Trust Portal, note: 'Hosted trust portal (Laika). React SPA — certificate artifacts render client-side.'}
+- {url: 'https://www.goto.com/company/trust', status: 200, name: GoTo Trust Center}
+- {url: 'https://www.goto.com/company/trust/security-measures', status: 200, name: Security Measures}
+- {url: 'https://www.goto.com/company/trust/compliance', status: 200, name: Compliance Documents}
+- {url: 'https://www.goto.com/company/trust/privacy', status: 200, name: Privacy}
+- {url: 'https://www.goto.com/company/trust/ai', status: 200, name: Responsible AI}
+certifications:
+- id: soc2-type2
+  name: SOC 2 (Type II)
+  evidence: >-
+    "As part of our commitment to our subscribers, we conduct SOC 2 (type II)
+    audits" — https://www.goto.com/company/trust/security-measures
+- id: soc3
+  name: SOC 3
+  evidence: >-
+    "we ... share out a SOC 3 report, which is a shareable version of the SOC
+    2 ... SOC 3 reports for each applicable product can be found and downloaded
+    on our product resources page" — https://www.goto.com/company/trust/security-measures
+- id: bsi-c5
+  name: C5 (BSI Cloud Computing Compliance Criteria Catalogue)
+  evidence: >-
+    Listed as a third-party security certification on
+    https://www.goto.com/company/trust/security-measures, with the caveat
+    "Please visit the specific product page to find out which certifications
+    apply."
+compliance_documents:
+  url: https://www.goto.com/company/trust/compliance
+  note: >-
+    Per-product compliance and control packs (Technical and Organizational
+    Measures, Sub-Processor Disclosures, EU Data Act documentation). GoTo
+    Webinar & GoTo Stage has its own dedicated compliance-documents entry.
+  goto_webinar_entry: GoTo Webinar & GoTo Stage
+evidence:
+- source: https://www.goto.com/company/trust/security-measures
+  keywords: [SOC 2, SOC 3, C5, trust portal, security certifications]
+- source: https://www.goto.com/company/trust/compliance
+  keywords: [compliance documents, TOMs, sub-processor disclosures, EU Data Act]
+caveat: >-
+  Certifications are asserted at the GoTo portfolio level, not per product.
+  GoTo's own page says to check the specific product page for which
+  certifications apply to GoTo Webinar. No certificate PDFs or audit reports
+  are reachable anonymously — trust.goto.com renders client-side and the SOC 3
+  downloads sit behind a product resources page.

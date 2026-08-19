@@ -1,0 +1,105 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for GoTo Webinar REST API v2
+  version: 1.0.0
+extends: openapi/_original/goto-webinar-openapi.yml
+x-generated: '2026-08-13'
+x-method: generated
+x-source: >-
+  Derived from GoTo's own published OpenAPI 3.0.0 plus the GoTo Developer Center
+  guides for rate limiting, authentication and webhooks. Every value asserted
+  here is traceable to a GoTo-published page; nothing about the API's behaviour
+  is invented. This overlay records API Evangelist annotations only and never
+  mutates the harvested original.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: goto-webinar
+    x-apievangelist-harvested: '2026-08-13'
+    x-apievangelist-source: https://developer.goto.com/page-data/GoToWebinarV2/page-data.json
+    x-apievangelist-source-note: >-
+      GoTo's developer portal is a Gatsby SPA that does not expose the spec at a
+      plain /openapi.json path; the verbatim OpenAPI is served from the portal's
+      own page-data endpoint and is the document the in-page download button
+      writes to disk.
+    x-apievangelist-artifacts:
+      conventions: conventions/goto-webinar-conventions.yml
+      errors: errors/goto-webinar-problem-types.yml
+      data_model: data-model/goto-webinar-data-model.yml
+      rate_limits: rate-limits/goto-webinar-rate-limits.yml
+      webhooks: asyncapi/goto-webinar-webhooks.yml
+      lifecycle: lifecycle/goto-webinar-lifecycle.yml
+      packages: packages/goto-webinar-packages.yml
+- target: $.info
+  update:
+    x-rate-limit:
+      limit: 10
+      unit: requests
+      window: 1s
+      status_on_exhaustion: 429
+      headers: []
+      source: https://developer.goto.com/guides/References/Ref-Rate-Limits/
+      note: >-
+        GoTo documents this limit in its rate-limiting reference but declares no
+        429 response on any operation and publishes no rate-limit headers.
+- target: $.info
+  update:
+    x-idempotency:
+      supported: false
+      note: >-
+        No Idempotency-Key parameter exists on any operation and no retry-safety
+        contract is documented. Unguarded writes: createWebinar,
+        createRegistrant, createPanelists, createCoorganizers, createWebhooks,
+        createUserSubscriptions.
+- target: $.info
+  update:
+    x-pagination:
+      styles:
+      - style: hal-embedded
+        params: [page, size]
+        response_fields: [_embedded, _links.self.href, _links.first.href, _links.last.href, page.size, page.totalElements, page.totalPages, page.number]
+      - style: flat
+        params: [page, limit]
+        response_fields: [data, total, page, limit, pageSize]
+      note: Two incompatible envelopes coexist in one API version.
+- target: $.components.securitySchemes.OAuth2
+  update:
+    x-issuer: https://identity.goto.com
+    x-authorization-server-metadata: https://identity.goto.com/.well-known/oauth-authorization-server
+    x-pkce: S256
+    x-introspection-endpoint: https://identity.goto.com/oauth/introspect
+    x-revocation-endpoint: https://identity.goto.com/oauth/revoke
+    x-jwks-uri: https://identity.goto.com/oauth/jwks.json
+    x-scope: 'collab:'
+    x-host-note: >-
+      The spec names authentication.logmeininc.com. That host serves RFC 8414
+      metadata reporting issuer https://identity.goto.com — the same
+      authorization server mid-rename. GoTo publishes a migration guide at
+      /guides/Authentication/New_Token_Retrieval_Migration_Guide/.
+    x-deprecated-flows:
+    - flow: password
+      note: >-
+        Direct Login. GoTo's SDK guides state "This authentication API is now
+        deprecated. All new clients will not be able to use this API." The flow
+        is nevertheless still declared in the live contract.
+- target: $.info
+  update:
+    x-webhooks:
+      published: true
+      spec: none
+      events: [registrant.added, registrant.joined, webinar.created, webinar.changed, survey.submitted]
+      management_tag: Webhooks
+      docs: https://developer.goto.com/guides/GoToWebinar/07_HOW_WebHooksOverview/
+      note: >-
+        Real event surface, no machine-readable event contract. Payload fields
+        are published as HTML tables only.
+- target: $.info
+  update:
+    x-error-semantics:
+      envelope: none
+      problem_json: false
+      auth_failure_status: 403
+      undeclared_statuses: [401, 429, '5xx']
+      note: >-
+        All 155 declared 4xx responses carry a description string with no schema,
+        content type or example.

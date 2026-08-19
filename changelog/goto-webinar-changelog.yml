@@ -1,0 +1,66 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.goto.com/changelog
+docs: https://developer.goto.com/changelog
+scheme: dated-entries
+current_version: '2.0.0'
+note: >-
+  The GoTo Developer Center runs ONE changelog for the whole GoTo API portfolio,
+  tagged by product (GoToConnect, GoToMeeting, GoToWebinar, LogMeInResolve,
+  Admin). Entries below are the GoTo Webinar-tagged subset. There is no
+  per-release version number and no semver — each entry is a dated prose note
+  with a deep link to the affected operation. Entries are rendered client-side
+  from the site bundle; there is no RSS/Atom feed and no machine-readable
+  changelog endpoint.
+cadence:
+  total_entries_published: 85
+  goto_webinar_entries: 4
+  newest_overall: '2026-08-03'
+  newest_goto_webinar: '2026-06-09'
+  observation: >-
+    GoTo Webinar accounts for 4 of the 85 published changelog entries. The
+    portfolio changelog is busy — GoToConnect dominates it — but the GoTo
+    Webinar API surface has changed four times since January 2025. This is a
+    mature, low-churn API rather than a stalled one: the most recent change
+    (2026-06-09) added a new webhook event.
+entries:
+- date: '2026-06-09'
+  product: GoToWebinar
+  title: New survey.submitted Webhook Event for GoToWebinar
+  breaking: false
+  additions: [survey.submitted webhook event]
+  href: https://developer.goto.com/guides/GoToWebinar/07_HOW_WebHooksOverview/
+  note: >-
+    A fifth webhook event, fired when a webinar attendee submits a post-session
+    survey. Carries surveyName plus a responses array of question/answer pairs.
+- date: '2025-03-25'
+  product: GoToWebinar
+  title: Supports Past Webinars Deletion
+  breaking: false
+  additions: [cancelWebinar accepts past webinars]
+  href: https://developer.goto.com/GoToWebinarV2/#tag/Webinars/operation/cancelWebinar
+- date: '2025-03-25'
+  product: GoToWebinar
+  title: Added deleteAll Flag to Cancel Webinar API for Series Deletion Control
+  breaking: false
+  additions: [deleteAll query parameter on cancelWebinar]
+  href: https://developer.goto.com/GoToWebinarV2/#tag/Webinars/operation/cancelWebinar
+  note: Controls whether a single session or an entire recurring series is cancelled.
+- date: '2025-01-21'
+  product: GoToWebinar
+  title: Adding breakout support for webinar creation
+  breaking: false
+  additions: [breakout room configuration on createWebinar]
+  href: https://developer.goto.com/GoToWebinarV2#tag/Webinars/operation/createWebinar
+related_portfolio_entries:
+- date: '2026-08-03'
+  product: Admin
+  title: Admin OpenAPI Specification Refreshed
+  note: >-
+    Included because it shows GoTo does refresh published OpenAPI documents as a
+    named changelog event — the practice exists at the portfolio level.
+subscription:
+  available: true
+  mechanism: In-portal subscribe button (requires a GoTo developer account sign-in)
+  feed: null
+  note: No RSS, Atom or JSON feed is published for the changelog.

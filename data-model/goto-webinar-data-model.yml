@@ -1,0 +1,155 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/_original/goto-webinar-openapi.yml
+summary:
+  schemas: 87
+  entities: 12
+  key_convention: >-
+    Every identifier in this API is a `<entity>Key`. Keys are numeric (int64)
+    except webhookKey and userSubscriptionKey, which are opaque strings. There
+    are no prefixed or self-describing ids, so a bare key value carries no type
+    information — an agent must track which key belongs to which entity from
+    context alone.
+  identity_gotcha: >-
+    GoTo's own reference states "Both userKey and organizerKey used in the APIs
+    contain the same value". The two names refer to one identity; treating them
+    as separate lookups is a common integration error.
+entities:
+- name: Account
+  key: accountKey
+  type: int64
+  root: true
+  description: The billing/tenant container. Only the admin surface is scoped here.
+  schemas: [AssetsSearchReq, Asset, Webinar, WebinarByKey, ReportingSession]
+  operations: [getAllAccountWebinars, searchAssetsForAdmin]
+- name: Organizer
+  key: organizerKey
+  aliases: [userKey, creatorKey, creatingOrganizerKey, startingOrganizerKey, webinarCreatorKey, memberKey]
+  type: int64
+  root: true
+  description: >-
+    The seat that owns webinars. Almost every path in the API is scoped under
+    /organizers/{organizerKey}. Appears under five different field names
+    depending on the response — creatorKey and webinarCreatorKey on assets and
+    events, creatingOrganizerKey/startingOrganizerKey on reporting sessions,
+    memberKey on co-organizers.
+  schemas: [Webinar, WebinarByKey, BrokerWebinar, ReportingSession, Asset, Coorganizer, CoorganizerDetails, CoorganizerReqCreate]
+- name: Webinar
+  key: webinarKey
+  type: int64
+  description: >-
+    The scheduled event. The hub of the model — nine of the twelve entities hang
+    off it. Recurring webinars share a recurrenceKey.
+  schemas: [Webinar, WebinarByKey, CreatedWebinar, BrokerWebinar, WebinarReqCreate, WebinarReqUpdate, CopyWebinar, CopiedWebinar, ReportingWebinars]
+  operations: [getWebinars, getWebinar, createWebinar, updateWebinar, cancelWebinar, copyWebinar, getInSessionWebinars, getAllAccountWebinars, getWebinarMeetingTimes, getStartUrl]
+- name: Session
+  key: sessionKey
+  type: int64
+  description: A single occurrence of a webinar. A one-off webinar has one session; a series or sequence has many.
+  schemas: [Session, ReportingSession, SessionInfoStatistics, SessionPerformance]
+  operations: [getAllSessions, getWebinarSession, getOrganizerSessions, getPerformance, getPerformanceForAllWebinarSessions]
+- name: Registrant
+  key: registrantKey
+  type: int64
+  description: >-
+    A person who signed up for a webinar. Carries the marketing payload —
+    organization, jobTitle, industry, numberOfEmployees, purchasingRole,
+    purchasingTimeFrame — plus custom question answers.
+  schemas: [Registrant, RegistrantCreated, RegistrantDetailed, RegistrantArray, RegistrantPaginatedResponse]
+  operations: [createRegistrant, getAllRegistrantsForWebinar, getRegistrant, deleteRegistrant, getRegistrationFields]
+- name: Attendee
+  key: registrantKey
+  type: int64
+  description: >-
+    A registrant who actually joined a session. Deliberately shares the
+    registrant's key rather than minting its own — an Attendee IS a Registrant
+    observed in a Session, scoped by (sessionKey, registrantKey).
+  schemas: [Attendee, ReportingAttendee, Attendance]
+  operations: [getAttendees, getAttendee, getAttendeesForAllWebinarSessions, getAttendeePollAnswers, getAttendeeQuestions, getAttendeeSurveyAnswers]
+- name: Panelist
+  key: panelistKey
+  type: int64
+  description: A presenter invited to a webinar (distinct from a co-organizer).
+  schemas: [Panelist, PanelistReqCreate, CreatedPanelist]
+  operations: [getPanelists, createPanelists, deleteWebinarPanelist, resendPanelistInvitation]
+- name: Coorganizer
+  key: coorganizerKey
+  alt_key: memberKey
+  type: int64
+  description: >-
+    Another organizer granted co-host rights on one webinar. Internal
+    co-organizers reference an existing organizerKey; external ones are invited
+    by email (the `external` query flag switches the two).
+  schemas: [Coorganizer, CoorganizerReqCreate, CoorganizerDetails]
+  operations: [getCoorganizers, createCoorganizers, deleteCoorganizer, resendCoorganizerInvitation]
+- name: RecordingAsset
+  key: recordingAssetKey
+  type: int64
+  description: A stored recording produced by a session; can be reused as the source of a Simulive webinar.
+  schemas: [Asset, Assets, AssetsResponse, RecordingAssetsResponse]
+  operations: [searchAssets, searchAssetsForAdmin, getRecordingAssets]
+- name: Poll
+  key: null
+  description: Poll definitions and their per-session responses. Identified positionally, not by key.
+  schemas: [Poll, PollAnswer, PollResponse, PollsAndSurveysStatistics]
+  operations: [getPolls, getAttendeePollAnswers]
+- name: Question
+  key: questionKey
+  alt_key: answerKey
+  description: >-
+    Two unrelated things share this name. AttendeeQuestion is a live Q&A item
+    asked during a session (identified by askerKey). RegistrationQuestion is a
+    custom question on the registration form (questionKey + answerKey).
+  schemas: [AttendeeQuestion, AnswerToAttendeeQuestion, RegistrationQuestion, RegistrationAnswer, RegistrantQAResponse, RegistrationFields]
+  operations: [getQuestions, getAttendeeQuestions, getRegistrationFields]
+- name: Webhook
+  key: webhookKey
+  type: string
+  description: A registered callback endpoint for GoTo Webinar events, plus its per-user subscriptions.
+  schemas: [Webhook, Webhooks, WebhooksResponse, CreateWebhookRequest, UpdateWebhooksRequest, WebhookState]
+  operations: [createWebhooks, getWebhooks, getWebhook, updateWebhooks, deleteWebhooks, createSecretKey]
+- name: UserSubscription
+  key: userSubscriptionKey
+  type: string
+  description: Binds one GoTo user to one webhook. Both the webhook and the subscription must be ACTIVE for events to flow.
+  schemas: [UserSubscription, UserSubscriptions, UserSubscriptionResponse, CreateUserSubscriptionRequest, UpdateUserSubscriptionsRequest, ActivationState, UserSubscriptionState]
+  operations: [createUserSubscriptions, getUserSubscriptions, getUserSubscription, updateUserSubscriptions, deleteUserSubscriptions]
+relationships:
+- {from: Account, to: Organizer, type: has_many, via: accountKey}
+- {from: Organizer, to: Webinar, type: has_many, via: organizerKey}
+- {from: Account, to: Webinar, type: has_many, via: accountKey}
+- {from: Webinar, to: Session, type: has_many, via: webinarKey, note: 'A single_session webinar has one; series and sequence types have many.'}
+- {from: Webinar, to: Webinar, type: has_many, via: recurrenceKey, note: 'Self-relation — recurrenceKey correlates the members of a series and is null for other types.'}
+- {from: Webinar, to: Registrant, type: has_many, via: webinarKey}
+- {from: Webinar, to: Panelist, type: has_many, via: webinarKey}
+- {from: Webinar, to: Coorganizer, type: has_many, via: webinarKey}
+- {from: Webinar, to: RecordingAsset, type: has_many, via: webinarKey}
+- {from: Webinar, to: RegistrationQuestion, type: has_many, via: webinarKey}
+- {from: Session, to: Attendee, type: has_many, via: sessionKey}
+- {from: Session, to: Poll, type: has_many, via: sessionKey}
+- {from: Session, to: AttendeeQuestion, type: has_many, via: sessionKey}
+- {from: Session, to: SessionPerformance, type: has_one, via: sessionKey}
+- {from: Registrant, to: Attendee, type: has_many, via: registrantKey, note: 'One registrant becomes one attendee record per session they join.'}
+- {from: Attendee, to: PollAnswer, type: has_many, via: registrantKey}
+- {from: Attendee, to: AttendeeQuestion, type: has_many, via: askerKey}
+- {from: Coorganizer, to: Organizer, type: belongs_to, via: memberKey, note: 'Internal co-organizers only; external ones are email invitations with no organizerKey.'}
+- {from: RecordingAsset, to: Organizer, type: belongs_to, via: creatorKey}
+- {from: RecordingAsset, to: Webinar, type: belongs_to, via: recordingAssetKey, note: 'Reverse direction — WebinarReqCreate/CopyWebinar take a recordingAssetKey to schedule a Simulive webinar from a stored recording.'}
+- {from: Webhook, to: UserSubscription, type: has_many, via: webhookKey}
+enumerations:
+  experienceType: [CLASSIC, SIMULIVE, BROADCAST]
+  recurrenceType: [single_session, series, sequence]
+  registrant_status: [Waiting, Approved, Cancelled, Denied]
+  webhookState: [ACTIVE, INACTIVE]
+  userSubscriptionState: [ACTIVE, INACTIVE]
+  activationState: [ACTIVE, INACTIVE]
+notes:
+- >-
+  The model has no soft-delete or archive concept. cancelWebinar removes the
+  webinar (with a deleteAll flag for series control) and deleteRegistrant
+  removes the registrant outright.
+- >-
+  Reporting responses (ReportingWebinars, ReportingSessions, ReportingAttendees)
+  are separate schemas from the primary resources with overlapping but not
+  identical field sets — the same entity has two shapes depending on which
+  collection returned it.

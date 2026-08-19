@@ -1,0 +1,85 @@
+generated: '2026-08-13'
+method: probed
+source: live GET of /.well-known/* on every apis.yml and OpenAPI servers[] host
+hosts:
+- host: https://api.getgo.com
+  note: The OpenAPI servers[] host (https://api.getgo.com/G2W/rest/v2). Returns a JSON NOT_FOUND envelope on every path.
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://developer.goto.com
+  note: The developer portal / docs host. Gatsby SPA — every miss returns the 404 HTML shell, not a document.
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://www.goto.com
+  note: Marketing site. Sitecore SPA — misses return the 404 HTML shell.
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://identity.goto.com
+  note: >-
+    The OAuth issuer named by the authorization server metadata. This is the
+    only host in the GoTo Webinar surface that serves a real /.well-known/
+    document.
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    spec: RFC 8414 OAuth 2.0 Authorization Server Metadata
+    file: goto-webinar-oauth-authorization-server.json
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /.well-known/jwks.json, status: 404, note: 'JWKS is served at /oauth/jwks.json, not under /.well-known/'}
+- host: https://authentication.logmeininc.com
+  note: >-
+    The legacy LogMeIn authentication host the GoTo Webinar OpenAPI still names
+    in its oauth2 flows. It serves the SAME RFC 8414 document as
+    identity.goto.com, with issuer https://identity.goto.com — confirming the
+    two are one authorization server behind a rename.
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    spec: RFC 8414 OAuth 2.0 Authorization Server Metadata
+    file: goto-webinar-oauth-authorization-server.json
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+summary:
+  hits: 1
+  document_types: [oauth-authorization-server]
+  security_txt: false
+  api_catalog: false
+  agent_card: false
+  note: >-
+    One real hit. GoTo serves RFC 8414 authorization-server metadata from its
+    identity host (and its logmeininc.com alias) but publishes no security.txt,
+    no OpenID Connect discovery document, no api-catalog and no agent card
+    anywhere across the GoTo Webinar surface. No SecurityTxt or AgentCard
+    pointer is emitted, because nothing was served at those paths.

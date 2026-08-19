@@ -1,0 +1,121 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/_original/goto-webinar-openapi.yml
+format: none
+rfc9457: false
+envelope:
+  documented: false
+  observed:
+    shape: '{"errorCode": "<STRING>", "message": "<STRING>"}'
+    observed_at: 'https://api.getgo.com/.well-known/security.txt'
+    observed_status: 404
+    example_errorCode: NOT_FOUND
+    note: >-
+      The api.getgo.com edge returns this JSON envelope on unrouted paths. It is
+      NOT declared anywhere in the GoToWebinarV2 OpenAPI and no docs page
+      documents it, so it is recorded here as observed behaviour, not as a
+      contract. Do not generate clients against it.
+summary:
+  distinct_status_codes: 4
+  total_error_responses: 155
+  with_schema: 0
+  with_example: 0
+  note: >-
+    Every one of the 155 declared 4xx responses across the 53 operations carries
+    a description string and nothing else — no `content`, no schema, no example.
+    There is no error-code registry, no problem-type URI space, and no
+    remediation guidance. An agent that receives a 400 from this API has no
+    machine-readable way to learn which field was wrong.
+problems:
+- status: 400
+  title: Bad Request
+  type: null
+  schema: null
+  occurrences: 52
+  remediation: >-
+    Validate required query parameters before calling. The common cause on the
+    date-ranged collections is fromTime/toTime — both are REQUIRED on
+    getWebinars, getAllAccountWebinars, getOrganizerSessions and
+    getInSessionWebinars, must be ISO 8601 UTC, and reserved characters such as
+    '+' must be URL-encoded (GoTo's own parameter docs call this out).
+  source_operations: [getAllAccountWebinars, getOrganizerSessions, getWebinars, createWebinar, getInSessionWebinars]
+- status: 400
+  title: Bad Request (times not valid, webinar in progress, webinar ended, etc.)
+  type: null
+  schema: null
+  occurrences: 1
+  remediation: >-
+    A webinar can only be updated while it is scheduled and in the future. Read
+    the session state via getWebinar / getAllSessions before attempting
+    updateWebinar.
+  source_operations: [updateWebinar]
+- status: 403
+  title: Forbidden
+  type: null
+  schema: null
+  occurrences: 52
+  remediation: >-
+    The access token is missing, expired, or was issued to an OAuth client whose
+    product entitlements do not include GoTo Webinar. Confirm the token was
+    requested with the `collab:` scope and that the authenticating account holds
+    a GoTo Webinar organizer seat. Note that GoTo returns 403 (not 401) for
+    authentication failures, so a client keyed on 401 will never trigger a token
+    refresh.
+  source_operations: [getAllAccountWebinars, getOrganizerSessions, getWebinars, createWebinar]
+- status: 403
+  title: Forbidden or oauth scope is invalid
+  type: null
+  schema: null
+  occurrences: 1
+  remediation: >-
+    The account-scoped recording-asset search requires an admin-entitled token.
+    This is the only operation whose description distinguishes an invalid scope
+    from a plain authorization failure.
+  source_operations: [searchAssetsForAdmin]
+- status: 404
+  title: Not Found
+  type: null
+  schema: null
+  occurrences: 48
+  remediation: >-
+    The organizerKey, webinarKey, sessionKey, registrantKey, panelistKey or
+    coorganizerKey does not resolve for this token's account. Keys are numeric
+    and account-scoped; a key valid for one organizer is a 404 for another.
+  source_operations: [getWebinar, cancelWebinar, getRegistrant, getWebinarSession, getAttendee]
+- status: 409
+  title: Conflict (Webinar is in session)
+  type: null
+  schema: null
+  occurrences: 1
+  remediation: >-
+    A webinar that is currently running cannot be cancelled. Poll
+    getInSessionWebinars first, or retry after the session ends.
+  source_operations: [cancelWebinar]
+- status: 409
+  title: The user is already registered
+  type: null
+  schema: null
+  occurrences: 1
+  remediation: >-
+    createRegistrant rejects a duplicate registration for the same email on the
+    same webinar. This is the closest thing the API has to a retry guard — but
+    it is a uniqueness constraint, not an idempotency contract, and it returns a
+    conflict rather than the original resource. A client retrying a timed-out
+    createRegistrant must treat 409 as "probably already succeeded" and confirm
+    with getAllRegistrantsForWebinar.
+  source_operations: [createRegistrant]
+undeclared:
+- status: 429
+  note: >-
+    GoTo's rate-limiting reference states plainly that exceeding 10 requests per
+    second returns HTTP 429, but no operation in the OpenAPI declares a 429
+    response. Generated clients will not model the one error every high-volume
+    integration is guaranteed to hit.
+  source: https://developer.goto.com/guides/References/Ref-Rate-Limits/
+- status: 401
+  note: >-
+    No operation declares 401. Authentication failures surface as 403 (see
+    above), which is unusual and worth pinning in any client's token-refresh
+    logic.
+- status: 5xx
+  note: No server-error responses are declared on any operation.

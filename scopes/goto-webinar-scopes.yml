@@ -1,24 +1,42 @@
-generated: '2026-07-11'
+generated: '2026-08-13'
 method: searched
-source: openapi/goto-webinar-openapi.yml
+source: openapi/_original/goto-webinar-openapi.yml
 docs: https://developer.goto.com/GoToWebinarV2
+metadata_document: https://identity.goto.com/.well-known/oauth-authorization-server
 schemes:
-- name: oauth2
-  source: openapi/goto-webinar-openapi.yml
+- name: OAuth2
+  source: openapi/_original/goto-webinar-openapi.yml
   flows:
   - flow: authorizationCode
-    authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
-    tokenUrl: https://authentication.logmeininc.com/oauth/token
+    authorizationUrl: https://identity.goto.com/oauth/authorize
+    tokenUrl: https://identity.goto.com/oauth/token
+    spec_declares_host: https://authentication.logmeininc.com
+  - flow: password
+    tokenUrl: https://identity.goto.com/oauth/token
+    deprecated: true
 scopes:
 - scope: 'collab:'
   description: >-
-    Grants access to the GoTo Webinar (collaboration) APIs. The GoTo Webinar
-    v2 API reference states this scope must be used when a token is requested
-    from the Authentication API.
+    Grants access to the GoTo Webinar (collaboration) APIs. The GoTo Webinar v2
+    API reference states under "Authentication Scopes" that "`collab:` must be
+    used when a token is requested from the Authentication API."
+  flows: [authorizationCode]
   sources:
   - https://developer.goto.com/GoToWebinarV2
+scope_count: 1
+scopes_declared_in_spec: 0
 note: >-
-  GoTo Webinar does not publish a granular per-endpoint scope catalog; the v2
-  API reference documents a single product-level scope (`collab:`) required
-  when requesting a token, with additional scopes selected per OAuth client in
-  the GoTo developer portal (https://developer.goto.com/GoToWebinarV2).
+  GoTo Webinar has no granular scope surface. The OpenAPI declares an oauth2
+  scheme with an EMPTY scopes map on both flows, and no operation names a scope
+  in its security requirement — the whole 53-operation API is guarded by one
+  product-level scope. Additional product scopes are selected per OAuth client
+  in the GoTo developer portal (https://developer.logmeininc.com/clients), not
+  requested per token. The RFC 8414 authorization-server metadata at
+  identity.goto.com does not advertise a scopes_supported array either.
+consequence: >-
+  A token that can read attendee reports can also cancel webinars, delete
+  registrants and rewrite webhook callbacks. There is no read-only token and no
+  way to least-privilege an agent — the only privilege boundary available is
+  the organizer seat the token authenticates as. This is the single largest
+  authorization gap in GoTo Webinar's agent surface, and closing it would need
+  a per-resource scope catalogue GoTo does not currently publish.

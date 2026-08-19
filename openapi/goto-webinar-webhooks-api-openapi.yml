@@ -1,0 +1,1039 @@
+openapi: 3.2.0
+info:
+  title: GoTo Webinar 2.0 REST Webhooks API
+  description: 'We recommend you use the v2 of this API. If you are still using v1, you can access [v1 documentation](/GoToWebinarV1).
+
+
+    ### Authentication Scopes
+
+    `collab:` must be used when a token is requested from the Authentication API.
+
+
+    # GoTo Webinar API Overview
+
+    Use the GoTo Webinar API to:
+
+    - Schedule webinars of one or more sessions
+
+    - Tailor your webinars with panelists, polls, questions and surveys
+
+    - Accept registrations
+
+    - Manage registrants and, once the webinar starts, attendees
+
+    - View data about historical and future webinars, registrants and attendees
+
+
+    Refer to GoTo Webinar product documentation to review the webinar types and product functionality.
+
+
+    Review call bodies and example call bodies in the API calls for alternate usage.
+
+
+    Note: Both userKey and organizerKey used in the APIs contain the same value
+
+
+    ## Getting Started
+
+    1. [Register](/guides/Get%20Started/01_HOW_developerAccount) for a developer account.
+
+    2. Create an [OAuth client](/guides/Get%20Started/02_HOW_createClient) and include the product(s) you plan to develop with.
+
+    3. Obtain a product account as needed. Trial versions will work, but last only 30 days. We recommend a full-featured account, preferably with an Admin role.
+
+    4. Request an [Access Token](/guides/Authentication/03_HOW_accessToken) to make API calls.
+
+    5. Make your first API calls. You can use cURL, Postman, or other API interfaces to make calls.
+
+    '
+  version: 2.0.0
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- OAuth2: []
+tags:
+- name: Webhooks
+  description: APIs available for management of a webhooks.
+paths:
+  /webhooks/secretkey:
+    post:
+      tags:
+      - Webhooks
+      operationId: createSecretKey
+      summary: Creates a new secret key
+      description: 'This creates a new secret key per application. It takes an optional validFrom value, a date time in ISO8601 format, e.g. 2019-07-01T22:00:00Z. The secret key will be activated at the given date. If validFrom is not passed, the secret key will be activated immediately. The secret key is used to generate a signature for events published to the callback url.
+
+        '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretKeyRequest'
+        description: The secret key object to create
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretKeyResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/webhooks/secretkey',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: {validFrom: 'string'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url https://api.getgo.com/G2W/rest/v2/webhooks/secretkey \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '{\"validFrom\":\"string\"}'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"{\\\"validFrom\\\":\\\"string\\\"}\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/webhooks/secretkey\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('{\"validFrom\":\"string\"}');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webhooks/secretkey');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webhooks/secretkey")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "{\"validFrom\":\"string\"}"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /webhooks:
+    post:
+      tags:
+      - Webhooks
+      operationId: createWebhooks
+      summary: Creates new webhooks
+      description: A new webhook will be created with the provided callback url. Callback url should be a https url. Callback url will be validated by making a GET request. It should return 200 OK.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateWebhookRequest'
+        description: Webhooks object to create
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhooksResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/webhooks',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: [\n    {\n      callbackUrl: 'string',\n      eventName: 'string',\n      eventVersion: 'string',\n      product: 'g2w'\n    }\n  ]\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url https://api.getgo.com/G2W/rest/v2/webhooks \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[{\"callbackUrl\":\"string\",\"eventName\":\"string\",\"eventVersion\":\"string\",\"product\":\"g2w\"}]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[{\\\"callbackUrl\\\":\\\"string\\\",\\\"eventName\\\":\\\"string\\\",\\\"eventVersion\\\":\\\"string\\\",\\\"product\\\":\\\"g2w\\\"}]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/webhooks\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[{\"callbackUrl\":\"string\",\"eventName\":\"string\",\"eventVersion\":\"string\",\"product\":\"g2w\"}]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webhooks');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webhooks")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[{\"callbackUrl\":\"string\",\"eventName\":\"string\",\"eventVersion\":\"string\",\"product\":\"g2w\"}]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    put:
+      tags:
+      - Webhooks
+      operationId: updateWebhooks
+      summary: Updates webhooks
+      description: Callback url and state of webhooks can be updated using this API. Callback url should be a https url. Callback url will be validated by making a GET request. It should return 200 OK.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpdateWebhooksRequest'
+        description: Webhooks object to update
+        required: true
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'PUT',\n  url: 'https://api.getgo.com/G2W/rest/v2/webhooks',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: [{callbackUrl: 'string', webhookKey: 'string', state: 'INACTIVE'}]\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request PUT \\\n  --url https://api.getgo.com/G2W/rest/v2/webhooks \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"state\":\"INACTIVE\"}]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[{\\\"callbackUrl\\\":\\\"string\\\",\\\"webhookKey\\\":\\\"string\\\",\\\"state\\\":\\\"INACTIVE\\\"}]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"PUT\", \"/G2W/rest/v2/webhooks\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"state\":\"INACTIVE\"}]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webhooks');\n$request->setRequestMethod('PUT');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webhooks")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Put.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"state\":\"INACTIVE\"}]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    get:
+      tags:
+      - Webhooks
+      operationId: getWebhooks
+      summary: Get webhooks
+      description: Get the list of webhooks by product for the requesting user. Product must be provided.
+      parameters:
+      - $ref: '#/components/parameters/product'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhooksResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/webhooks',\n  params: {product: 'SOME_STRING_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/webhooks?product=SOME_STRING_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/webhooks?product=SOME_STRING_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webhooks');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'product' => 'SOME_STRING_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webhooks?product=SOME_STRING_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    delete:
+      tags:
+      - Webhooks
+      operationId: deleteWebhooks
+      summary: Deletes webhooks
+      description: Deletes webhooks by list of webhookKeys
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        description: List of webhookKeys to delete
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'DELETE',\n  url: 'https://api.getgo.com/G2W/rest/v2/webhooks',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: ['string']\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request DELETE \\\n  --url https://api.getgo.com/G2W/rest/v2/webhooks \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[\"string\"]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[\\\"string\\\"]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"DELETE\", \"/G2W/rest/v2/webhooks\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[\"string\"]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webhooks');\n$request->setRequestMethod('DELETE');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webhooks")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Delete.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[\"string\"]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /webhooks/{webhookKey}:
+    get:
+      tags:
+      - Webhooks
+      operationId: getWebhook
+      summary: Get webhook
+      description: Get a webhook by webhookKey for the requesting user.
+      parameters:
+      - $ref: '#/components/parameters/webhookKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/webhooks/%7BwebhookKey%7D',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/webhooks/%7BwebhookKey%7D \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/webhooks/%7BwebhookKey%7D", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/webhooks/%7BwebhookKey%7D');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/webhooks/%7BwebhookKey%7D")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /userSubscriptions:
+    post:
+      tags:
+      - Webhooks
+      operationId: createUserSubscriptions
+      summary: Creates new user subscriptions
+      description: A user subscriptions will be created for the provided webhook. Callback url can be provided for user subscription. The callback url will be validated by making a GET request. It should return 200 OK.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUserSubscriptionRequest'
+        description: User subscriptions to create
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSubscriptionResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/userSubscriptions',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: [\n    {callbackUrl: 'string', webhookKey: 'string', userSubscriptionState: 'INACTIVE'}\n  ]\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url https://api.getgo.com/G2W/rest/v2/userSubscriptions \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"userSubscriptionState\":\"INACTIVE\"}]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[{\\\"callbackUrl\\\":\\\"string\\\",\\\"webhookKey\\\":\\\"string\\\",\\\"userSubscriptionState\\\":\\\"INACTIVE\\\"}]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/userSubscriptions\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"userSubscriptionState\":\"INACTIVE\"}]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/userSubscriptions');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/userSubscriptions")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"userSubscriptionState\":\"INACTIVE\"}]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    put:
+      tags:
+      - Webhooks
+      operationId: updateUserSubscriptions
+      summary: Updates user subscriptions
+      description: Callback url and state of user subscriptions can be updated using this API. The callback url will be validated by making a GET request. It should return 200 OK.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpdateUserSubscriptionsRequest'
+        description: User subscriptions to update
+        required: true
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'PUT',\n  url: 'https://api.getgo.com/G2W/rest/v2/userSubscriptions',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: [\n    {\n      callbackUrl: 'string',\n      webhookKey: 'string',\n      userSubscriptionKey: 'string',\n      userSubscriptionState: 'INACTIVE'\n    }\n  ]\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request PUT \\\n  --url https://api.getgo.com/G2W/rest/v2/userSubscriptions \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"userSubscriptionKey\":\"string\",\"userSubscriptionState\":\"INACTIVE\"}]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[{\\\"callbackUrl\\\":\\\"string\\\",\\\"webhookKey\\\":\\\"string\\\",\\\"userSubscriptionKey\\\":\\\"string\\\",\\\"userSubscriptionState\\\":\\\"INACTIVE\\\"}]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"PUT\", \"/G2W/rest/v2/userSubscriptions\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"userSubscriptionKey\":\"string\",\"userSubscriptionState\":\"INACTIVE\"}]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/userSubscriptions');\n$request->setRequestMethod('PUT');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/userSubscriptions")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Put.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[{\"callbackUrl\":\"string\",\"webhookKey\":\"string\",\"userSubscriptionKey\":\"string\",\"userSubscriptionState\":\"INACTIVE\"}]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    get:
+      tags:
+      - Webhooks
+      operationId: getUserSubscriptions
+      summary: Get user subscriptions
+      description: Get the list of user subscriptions by product for the requesting user. Product must be provided.
+      parameters:
+      - $ref: '#/components/parameters/product'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSubscriptionResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/userSubscriptions',\n  params: {product: 'SOME_STRING_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url 'https://api.getgo.com/G2W/rest/v2/userSubscriptions?product=SOME_STRING_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/userSubscriptions?product=SOME_STRING_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/userSubscriptions');\n$request->setRequestMethod('GET');\n$request->setQuery(new http\\QueryString([\n  'product' => 'SOME_STRING_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/userSubscriptions?product=SOME_STRING_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    delete:
+      tags:
+      - Webhooks
+      operationId: deleteUserSubscriptions
+      summary: Deletes user subscriptions
+      description: Deletes user subscriptions by list of userSubscriptionKeys
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        description: List of userSubscriptionKeys to delete
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'DELETE',\n  url: 'https://api.getgo.com/G2W/rest/v2/userSubscriptions',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: ['string']\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request DELETE \\\n  --url https://api.getgo.com/G2W/rest/v2/userSubscriptions \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[\"string\"]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[\\\"string\\\"]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"DELETE\", \"/G2W/rest/v2/userSubscriptions\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[\"string\"]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/userSubscriptions');\n$request->setRequestMethod('DELETE');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/userSubscriptions")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Delete.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[\"string\"]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /userSubscriptions/{userSubscriptionsKey}:
+    get:
+      tags:
+      - Webhooks
+      operationId: getUserSubscription
+      summary: Get user subscription
+      description: Get a user subscription by userSubscriptionKey for the requesting user.
+      parameters:
+      - $ref: '#/components/parameters/userSubscriptionsKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSubscription'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/userSubscriptions/%7BuserSubscriptionsKey%7D',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/userSubscriptions/%7BuserSubscriptionsKey%7D \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/userSubscriptions/%7BuserSubscriptionsKey%7D", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/userSubscriptions/%7BuserSubscriptionsKey%7D');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/userSubscriptions/%7BuserSubscriptionsKey%7D")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+components:
+  schemas:
+    UserSubscriptionResponse:
+      description: Describes a list of user subscriptions
+      required:
+      - _embedded
+      properties:
+        _embedded:
+          $ref: '#/components/schemas/UserSubscriptions'
+    ActivationState:
+      type: string
+      description: Final state of user subscription. ActivationState will be ACTIVE if both webhook and user subscription states are ACTIVE, INACTIVE otherwise.
+      enum:
+      - INACTIVE
+      - ACTIVE
+    UserSubscriptionState:
+      type: string
+      description: State of the user subscription
+      enum:
+      - INACTIVE
+      - ACTIVE
+    SecretKeyRequest:
+      description: Representation of a secret key
+      properties:
+        validFrom:
+          description: A date time in ISO8601 format, e.g. 2019-07-01T22:00:00Z. The secret key will be activated at the given date
+          type: string
+    UpdateUserSubscriptionsRequest:
+      description: Describes a single user subscription update request
+      required:
+      - webhookKey
+      - userSubscriptionKey
+      properties:
+        callbackUrl:
+          type: string
+          description: A HTTPs url that can accept posted events. It should return 200 OK for GET requests.
+        webhookKey:
+          type: string
+          description: The unique identifier for the webhook
+        userSubscriptionKey:
+          type: string
+          description: The unique identifier for the user subscription
+        userSubscriptionState:
+          $ref: '#/components/schemas/UserSubscriptionState'
+    UpdateWebhooksRequest:
+      description: Describes a single webhook update request
+      required:
+      - webhookKey
+      properties:
+        callbackUrl:
+          type: string
+          description: A HTTPs url that can accept posted events. It should return 200 OK for GET requests.
+        webhookKey:
+          type: string
+          description: The unique identifier for the webhook
+        state:
+          $ref: '#/components/schemas/WebhookState'
+    CreateUserSubscriptionRequest:
+      description: Describes a single user subscription
+      required:
+      - webhookKey
+      properties:
+        callbackUrl:
+          type: string
+          description: A HTTPs url that can accept posted events. It should return 200 OK for GET requests.
+        webhookKey:
+          type: string
+          description: The unique identifier for the webhook
+        userSubscriptionState:
+          $ref: '#/components/schemas/UserSubscriptionState'
+    Webhooks:
+      description: ''
+      required:
+      - webhooks
+      properties:
+        webhooks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+    UserSubscription:
+      description: Describes a single user subscription
+      properties:
+        callbackUrl:
+          type: string
+          description: A HTTPs url that can accept posted events. It should return 200 OK for GET requests.
+        eventName:
+          type: string
+          description: Type of event of the webhook
+        eventVersion:
+          type: string
+          description: Version of event being subscribed for
+        product:
+          $ref: '#/components/schemas/Product'
+        webhookKey:
+          type: string
+          description: The unique identifier for the webhook
+        userSubscriptionKey:
+          type: string
+          description: The unique identifier for the user subscription
+        userSubscriptionState:
+          $ref: '#/components/schemas/UserSubscriptionState'
+        activationState:
+          $ref: '#/components/schemas/ActivationState'
+        createTime:
+          type: string
+          description: The create time of the webhook
+    Product:
+      type: string
+      description: Product of the events
+      enum:
+      - g2w
+    SecretKeyResponse:
+      description: Representation of a secret key
+      properties:
+        id:
+          description: The unique identifier for the secret key
+          type: integer
+        value:
+          description: The value of the secret key. This is used for generating a signature of events posted to the callback url
+          type: string
+        validFrom:
+          description: A date time in ISO8601 format, e.g. 2019-07-01T22:00:00Z. The secret key will be activated at the given date
+          type: string
+    CreateWebhookRequest:
+      description: Representation of a single webhook
+      required:
+      - callbackUrl
+      - eventName
+      - eventVersion
+      - product
+      properties:
+        callbackUrl:
+          type: string
+          description: A HTTPs url that can accept posted events. It should return 200 OK for GET requests.
+        eventName:
+          type: string
+          description: Type of event for the webhook. Supported eventNames are registrant.added, registrant.joined, webinar.created, webinar.changed, survey.submitted
+        eventVersion:
+          type: string
+          description: Version of event being subscribed for. Supported eventVersion is 1.0.0
+        product:
+          $ref: '#/components/schemas/Product'
+    WebhooksResponse:
+      description: List of webhooks
+      required:
+      - _embedded
+      properties:
+        _embedded:
+          $ref: '#/components/schemas/Webhooks'
+    UserSubscriptions:
+      description: ''
+      required:
+      - userSubscriptions
+      properties:
+        userSubscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSubscription'
+    Webhook:
+      description: Representation of a single webhook
+      required:
+      - callbackUrl
+      - eventName
+      - eventVersion
+      - product
+      properties:
+        callbackUrl:
+          type: string
+          description: A HTTPs url that can accept posted events. It should return 200 OK for GET requests.
+        eventName:
+          type: string
+          description: Type of event for the webhook. Supported eventNames are registrant.added, registrant.joined, webinar.created, webinar.changed, survey.submitted
+        eventVersion:
+          type: string
+          description: Version of event being subscribed for. Supported eventVersion is 1.0.0
+        product:
+          $ref: '#/components/schemas/Product'
+        webhookKey:
+          type: string
+          description: The unique identifier for the webhook
+        state:
+          $ref: '#/components/schemas/WebhookState'
+        createTime:
+          type: string
+          description: The create time of the webhook
+    WebhookState:
+      type: string
+      description: State of the webhook
+      enum:
+      - INACTIVE
+      - ACTIVE
+  parameters:
+    userSubscriptionsKey:
+      name: userSubscriptionsKey
+      in: path
+      description: The unique identifier for a user subscription.
+      required: true
+      schema:
+        type: string
+    product:
+      name: product
+      in: query
+      description: Supported products
+      required: true
+      schema:
+        type: string
+        enum:
+        - g2w
+    webhookKey:
+      name: webhookKey
+      in: path
+      description: The unique identifier for a webhook.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'To use this API, you _must_ provide an OAuth Token that has been requested from LogMeIn OAuth Authorization Server. See https://goto-developer.logmeininc.com/how-get-access-token-and-organizer-key for documentation about how to use LogMeIn’s OAuth.
+
+        '
+      in: header
+      name: Authorization
+      scheme: Bearer
+      flows:
+        password:
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token

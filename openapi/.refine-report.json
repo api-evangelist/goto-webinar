@@ -1,26 +1,26 @@
 {
   "provider": "goto-webinar",
   "sources": [
-    "goto-webinar-attendees-api-openapi.yml",
-    "goto-webinar-panelists-api-openapi.yml",
-    "goto-webinar-polls-api-openapi.yml",
-    "goto-webinar-questions-api-openapi.yml",
-    "goto-webinar-registrants-api-openapi.yml",
-    "goto-webinar-sessions-api-openapi.yml",
-    "goto-webinar-webinars-api-openapi.yml"
+    "goto-webinar-openapi.yml"
   ],
   "outputs": [
     "goto-webinar-attendees-api-openapi.yml",
+    "goto-webinar-co-organizers-api-openapi.yml",
     "goto-webinar-panelists-api-openapi.yml",
-    "goto-webinar-polls-api-openapi.yml",
-    "goto-webinar-questions-api-openapi.yml",
+    "goto-webinar-recordingassets-api-openapi.yml",
     "goto-webinar-registrants-api-openapi.yml",
     "goto-webinar-sessions-api-openapi.yml",
+    "goto-webinar-webhooks-api-openapi.yml",
     "goto-webinar-webinars-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "archived openapi/goto-webinar-openapi.yml"
+  ],
   "errors": [],
   "warnings": [],
-  "notes": [],
+  "notes": [
+    "goto-webinar-openapi.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+3 apis, 9 total)"
+  ],
   "skipped": []
 }

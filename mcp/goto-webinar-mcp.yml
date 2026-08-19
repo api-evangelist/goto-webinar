@@ -1,0 +1,103 @@
+generated: '2026-08-13'
+method: derived
+status: candidate
+source: openapi/_original/goto-webinar-openapi.yml
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+search:
+  official_server: none-found
+  probed:
+  - {url: 'https://mcp.goto.com/mcp', method: 'POST tools/list', result: 'DNS/connection failure (curl 000)'}
+  - {url: 'https://mcp.getgo.com/mcp', method: 'POST tools/list', result: 'DNS/connection failure (curl 000)'}
+  - {url: 'https://api.getgo.com/mcp', method: 'POST tools/list', status: 404}
+  - {url: 'https://developer.goto.com/mcp', method: 'POST tools/list', status: 404}
+  - {url: 'https://www.goto.com/mcp', method: 'POST tools/list', status: 405}
+  - {url: 'https://registry.modelcontextprotocol.io/v0/servers?search=goto', result: 'no GoTo/LogMeIn server; only unrelated gotolstoy.com entries'}
+  - {url: 'https://registry.npmjs.org/-/v1/search?text=gotowebinar', result: 'no first-party package; all results third-party (Pipedream, DataFire, n8n, community)'}
+  note: >-
+    GoTo publishes no MCP server for GoTo Webinar — no remote endpoint, no stdio
+    package, no registry listing, and no mention in the Developer Center. The
+    tools below are a DERIVED candidate surface computed from GoTo's own
+    OpenAPI, not something GoTo ships. No endpoint URL is asserted.
+server:
+  name: goto-webinar
+  transport: null
+  url: null
+auth_model:
+  scheme: oauth2
+  flow: authorizationCode
+  authorization_endpoint: https://identity.goto.com/oauth/authorize
+  token_endpoint: https://identity.goto.com/oauth/token
+  pkce: S256
+  scope: 'collab:'
+  note: >-
+    A hosted GoTo Webinar MCP server would have a clean path to OAuth: the
+    authorization server already publishes RFC 8414 metadata with PKCE S256,
+    introspection and revocation, which is most of what the MCP authorization
+    spec asks for.
+tools:
+- {name: list_webinars, description: 'List an organizer''s webinars in a date range', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getWebinars'}
+- {name: list_account_webinars, description: 'List all webinars for an account in a date range (admin)', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getAllAccountWebinars'}
+- {name: get_webinar, description: 'Get a single webinar by key', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getWebinar'}
+- {name: create_webinar, description: 'Schedule a new webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#createWebinar'}
+- {name: update_webinar, description: 'Update a scheduled webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#updateWebinar'}
+- {name: cancel_webinar, description: 'Cancel a webinar or an entire series', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#cancelWebinar'}
+- {name: copy_webinar, description: 'Copy an existing webinar into a new one', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#copyWebinar'}
+- {name: list_in_session_webinars, description: 'List webinars currently running', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getInSessionWebinars'}
+- {name: get_webinar_meeting_times, description: 'Get the scheduled session times for a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getWebinarMeetingTimes'}
+- {name: get_start_url, description: 'Get the organizer start URL for a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getStartUrl'}
+- {name: get_audio_information, description: 'Get the audio/conference settings for a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getAudioInformation'}
+- {name: update_audio_information, description: 'Update the audio/conference settings for a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#updateAudioInformation'}
+- {name: list_sessions, description: 'List the sessions of a webinar', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getAllSessions'}
+- {name: get_session, description: 'Get a single webinar session', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getWebinarSession'}
+- {name: list_organizer_sessions, description: 'List all sessions for an organizer in a date range', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getOrganizerSessions'}
+- {name: get_session_performance, description: 'Get attendance and engagement statistics for a session', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getPerformance'}
+- {name: get_webinar_performance, description: 'Get performance across all sessions of a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getPerformanceForAllWebinarSessions'}
+- {name: list_session_polls, description: 'List poll results for a session', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getPolls'}
+- {name: list_session_questions, description: 'List Q&A questions asked in a session', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getQuestions'}
+- {name: list_session_surveys, description: 'List survey results for a session', source_operation: 'openapi/goto-webinar-sessions-api-openapi.yml#getSurveys'}
+- {name: create_registrant, description: 'Register a person for a webinar', source_operation: 'openapi/goto-webinar-registrants-api-openapi.yml#createRegistrant'}
+- {name: list_registrants, description: 'List everyone registered for a webinar', source_operation: 'openapi/goto-webinar-registrants-api-openapi.yml#getAllRegistrantsForWebinar'}
+- {name: get_registrant, description: 'Get a single registrant', source_operation: 'openapi/goto-webinar-registrants-api-openapi.yml#getRegistrant'}
+- {name: delete_registrant, description: 'Remove a registrant from a webinar', source_operation: 'openapi/goto-webinar-registrants-api-openapi.yml#deleteRegistrant'}
+- {name: get_registration_fields, description: 'Get the registration form fields and custom questions', source_operation: 'openapi/goto-webinar-registrants-api-openapi.yml#getRegistrationFields'}
+- {name: list_session_attendees, description: 'List attendees of a session', source_operation: 'openapi/goto-webinar-attendees-api-openapi.yml#getAttendees'}
+- {name: get_attendee, description: 'Get a single session attendee', source_operation: 'openapi/goto-webinar-attendees-api-openapi.yml#getAttendee'}
+- {name: list_webinar_attendees, description: 'List attendees across all sessions of a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getAttendeesForAllWebinarSessions'}
+- {name: get_attendee_poll_answers, description: 'Get an attendee''s poll answers', source_operation: 'openapi/goto-webinar-attendees-api-openapi.yml#getAttendeePollAnswers'}
+- {name: get_attendee_questions, description: 'Get the questions an attendee asked', source_operation: 'openapi/goto-webinar-attendees-api-openapi.yml#getAttendeeQuestions'}
+- {name: get_attendee_survey_answers, description: 'Get an attendee''s survey answers', source_operation: 'openapi/goto-webinar-attendees-api-openapi.yml#getAttendeeSurveyAnswers'}
+- {name: list_panelists, description: 'List the panelists of a webinar', source_operation: 'openapi/goto-webinar-panelists-api-openapi.yml#getPanelists'}
+- {name: create_panelists, description: 'Invite panelists to a webinar', source_operation: 'openapi/goto-webinar-panelists-api-openapi.yml#createPanelists'}
+- {name: delete_panelist, description: 'Remove a panelist from a webinar', source_operation: 'openapi/goto-webinar-panelists-api-openapi.yml#deleteWebinarPanelist'}
+- {name: resend_panelist_invitation, description: 'Resend a panelist''s invitation email', source_operation: 'openapi/goto-webinar-panelists-api-openapi.yml#resendPanelistInvitation'}
+- {name: list_coorganizers, description: 'List the co-organizers of a webinar', source_operation: 'openapi/goto-webinar-co-organizers-api-openapi.yml#getCoorganizers'}
+- {name: create_coorganizers, description: 'Add co-organizers to a webinar', source_operation: 'openapi/goto-webinar-co-organizers-api-openapi.yml#createCoorganizers'}
+- {name: delete_coorganizer, description: 'Remove a co-organizer', source_operation: 'openapi/goto-webinar-co-organizers-api-openapi.yml#deleteCoorganizer'}
+- {name: resend_coorganizer_invitation, description: 'Resend a co-organizer''s invitation email', source_operation: 'openapi/goto-webinar-co-organizers-api-openapi.yml#resendCoorganizerInvitation'}
+- {name: search_recording_assets, description: 'Search recording assets for the authenticated organizer', source_operation: 'openapi/goto-webinar-recordingassets-api-openapi.yml#searchAssets'}
+- {name: search_account_recording_assets, description: 'Search recording assets across an account (admin)', source_operation: 'openapi/goto-webinar-recordingassets-api-openapi.yml#searchAssetsForAdmin'}
+- {name: get_webinar_recording_assets, description: 'Get the recording assets produced by a webinar', source_operation: 'openapi/goto-webinar-webinars-api-openapi.yml#getRecordingAssets'}
+- {name: create_webhook, description: 'Register a webhook callback for GoTo Webinar events', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#createWebhooks'}
+- {name: list_webhooks, description: 'List registered webhooks', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#getWebhooks'}
+- {name: get_webhook, description: 'Get a single webhook', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#getWebhook'}
+- {name: update_webhook, description: 'Update a webhook, including activating it', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#updateWebhooks'}
+- {name: delete_webhook, description: 'Delete a webhook', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#deleteWebhooks'}
+- {name: create_webhook_secret_key, description: 'Create the shared secret used to validate webhook deliveries', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#createSecretKey'}
+- {name: create_user_subscription, description: 'Subscribe a user to a webhook', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#createUserSubscriptions'}
+- {name: list_user_subscriptions, description: 'List webhook user subscriptions', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#getUserSubscriptions'}
+- {name: get_user_subscription, description: 'Get a single webhook user subscription', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#getUserSubscription'}
+- {name: update_user_subscription, description: 'Update a webhook user subscription state', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#updateUserSubscriptions'}
+- {name: delete_user_subscription, description: 'Delete a webhook user subscription', source_operation: 'openapi/goto-webinar-webhooks-api-openapi.yml#deleteUserSubscriptions'}
+coverage:
+  rest_operations: 53
+  tools_derived: 53
+  note: >-
+    One candidate tool per published operationId. Input schemas are inherited
+    from each operation's parameters and requestBody in the OpenAPI — see
+    mcp/goto-webinar-tool-crosswalk.yml.

@@ -1,0 +1,219 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "GoTo Webinar REST API v2 Attendees Webinars API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "authorization_code",
+      "authorizationUrl": "https://authentication.logmeininc.com/oauth/authorize",
+      "accessTokenUrl": "https://authentication.logmeininc.com/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Webinars",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get organizer's webinars in a date range",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "fromTime",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "toTime",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get organizer's webinars in a date range"
+        },
+        {
+          "info": {
+            "name": "Create a webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a webinar"
+        },
+        {
+          "info": {
+            "name": "Get upcoming webinars",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/upcomingWebinars",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get upcoming webinars"
+        },
+        {
+          "info": {
+            "name": "Get historical webinars",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/historicalWebinars",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "fromTime",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "toTime",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get historical webinars"
+        },
+        {
+          "info": {
+            "name": "Get a webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a webinar"
+        },
+        {
+          "info": {
+            "name": "Update a webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "notifyParticipants",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a webinar"
+        },
+        {
+          "info": {
+            "name": "Cancel a webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "sendCancellationEmails",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Cancel a webinar"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

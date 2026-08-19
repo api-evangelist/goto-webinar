@@ -1,0 +1,461 @@
+openapi: 3.2.0
+info:
+  title: GoTo Webinar 2.0 REST Co Organizers API
+  description: 'We recommend you use the v2 of this API. If you are still using v1, you can access [v1 documentation](/GoToWebinarV1).
+
+
+    ### Authentication Scopes
+
+    `collab:` must be used when a token is requested from the Authentication API.
+
+
+    # GoTo Webinar API Overview
+
+    Use the GoTo Webinar API to:
+
+    - Schedule webinars of one or more sessions
+
+    - Tailor your webinars with panelists, polls, questions and surveys
+
+    - Accept registrations
+
+    - Manage registrants and, once the webinar starts, attendees
+
+    - View data about historical and future webinars, registrants and attendees
+
+
+    Refer to GoTo Webinar product documentation to review the webinar types and product functionality.
+
+
+    Review call bodies and example call bodies in the API calls for alternate usage.
+
+
+    Note: Both userKey and organizerKey used in the APIs contain the same value
+
+
+    ## Getting Started
+
+    1. [Register](/guides/Get%20Started/01_HOW_developerAccount) for a developer account.
+
+    2. Create an [OAuth client](/guides/Get%20Started/02_HOW_createClient) and include the product(s) you plan to develop with.
+
+    3. Obtain a product account as needed. Trial versions will work, but last only 30 days. We recommend a full-featured account, preferably with an Admin role.
+
+    4. Request an [Access Token](/guides/Authentication/03_HOW_accessToken) to make API calls.
+
+    5. Make your first API calls. You can use cURL, Postman, or other API interfaces to make calls.
+
+    '
+  version: 2.0.0
+servers:
+- url: https://api.getgo.com/G2W/rest/v2
+security:
+- OAuth2: []
+tags:
+- name: Co-organizers
+  description: Operations available for co-organizers of a given webinar.
+paths:
+  /organizers/{organizerKey}/webinars/{webinarKey}/coorganizers:
+    get:
+      tags:
+      - Co-organizers
+      operationId: getCoorganizers
+      summary: Get co-organizers
+      description: 'Returns the co-organizers for the specified webinar. The original organizer who created the webinar is filtered out of the list. If the webinar has no co-organizers, an empty array is returned. Co-organizers that do not have a GoTo Webinar account are returned as external co-organizers. For those organizers no surname is returned.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coorganizer'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'GET',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers',\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request GET \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("GET", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers');\n$request->setRequestMethod('GET');\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+    post:
+      tags:
+      - Co-organizers
+      operationId: createCoorganizers
+      summary: Create co-organizers
+      description: 'Creates co-organizers for the specified webinar. For co-organizers that have a GoTo Webinar account you have to set the parameter ''external'' to ''false''. In this case you have to pass the parameter ''organizerKey'' only. For co-organizers that have no GoTo Webinar account you have to set the parameter ''external'' to ''true''. In this case you have to pass the parameters ''givenName'' and ''email''. Since there is no parameter for ''surname'' you should pass first and last name to the parameter ''givenName''.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CoorganizerReqCreate'
+        description: The co-organizer details
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coorganizer'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers',\n  headers: {\n    Authorization: 'Bearer REPLACE_BEARER_TOKEN',\n  },\n  data: [{external: true, organizerKey: 'string', givenName: 'string', email: 'string'}]\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN' \\\n  --header 'content-type: application/json' \\\n  --data '[{\"external\":true,\"organizerKey\":\"string\",\"givenName\":\"string\",\"email\":\"string\"}]'"
+      - lang: Python + Python3
+        source: "import http.client\n\nconn = http.client.HTTPSConnection(\"api.getgo.com\")\n\npayload = \"[{\\\"external\\\":true,\\\"organizerKey\\\":\\\"string\\\",\\\"givenName\\\":\\\"string\\\",\\\"email\\\":\\\"string\\\"}]\"\n\nheaders = {\n    'Authorization': \"Bearer REPLACE_BEARER_TOKEN\",\n    'content-type': \"application/json\"\n    }\n\nconn.request(\"POST\", \"/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers\", payload, headers)\n\nres = conn.getresponse()\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))"
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$body = new http\\Message\\Body;\n$body->append('[{\"external\":true,\"organizerKey\":\"string\",\"givenName\":\"string\",\"email\":\"string\"}]');\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers');\n$request->setRequestMethod('POST');\n$request->setBody($body);\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN',\n  'content-type' => 'application/json'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+          request["content-type"] = ''application/json''
+
+          request.body = "[{\"external\":true,\"organizerKey\":\"string\",\"givenName\":\"string\",\"email\":\"string\"}]"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/coorganizers/{coorganizerKey}:
+    delete:
+      tags:
+      - Co-organizers
+      operationId: deleteCoorganizer
+      summary: Delete co-organizer
+      description: 'Deletes an internal co-organizer specified by the coorganizerKey (memberKey).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - $ref: '#/components/parameters/coorganizerKey'
+      - name: external
+        in: query
+        description: 'By default only internal co-organizers (with a GoTo Webinar account) can be deleted. If you want to use this call for external co-organizers you have to set this parameter to ''true''.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: No Content (Co-organizer was deleted)
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'DELETE',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D',\n  params: {external: 'SOME_BOOLEAN_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request DELETE \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D?external=SOME_BOOLEAN_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("DELETE", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D?external=SOME_BOOLEAN_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D');\n$request->setRequestMethod('DELETE');\n$request->setQuery(new http\\QueryString([\n  'external' => 'SOME_BOOLEAN_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D?external=SOME_BOOLEAN_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Delete.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+  /organizers/{organizerKey}/webinars/{webinarKey}/coorganizers/{coorganizerKey}/resendInvitation:
+    post:
+      tags:
+      - Co-organizers
+      operationId: resendCoorganizerInvitation
+      summary: Resend invitation
+      description: Resends an invitation email to the specified co-organizer
+      parameters:
+      - $ref: '#/components/parameters/organizerKey'
+      - $ref: '#/components/parameters/webinarKey'
+      - $ref: '#/components/parameters/coorganizerKey'
+      - name: external
+        in: query
+        description: 'By default only internal co-organizers (with a GoTo Webinar account) will retrieve the resent invitation email. If you want to use this call for external co-organizers you have to set this parameter to ''true''.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: No Content (Invitation email was sent)
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      x-codeSamples:
+      - lang: Node + Axios
+        source: "var axios = require(\"axios\").default;\n\nvar options = {\n  method: 'POST',\n  url: 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D/resendInvitation',\n  params: {external: 'SOME_BOOLEAN_VALUE'},\n  headers: {Authorization: 'Bearer REPLACE_BEARER_TOKEN'}\n};\n\naxios.request(options).then(function (response) {\n  console.log(response.data);\n}).catch(function (error) {\n  console.error(error);\n});"
+      - lang: Shell + Curl
+        source: "curl --request POST \\\n  --url 'https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D/resendInvitation?external=SOME_BOOLEAN_VALUE' \\\n  --header 'Authorization: Bearer REPLACE_BEARER_TOKEN'"
+      - lang: Python + Python3
+        source: 'import http.client
+
+
+          conn = http.client.HTTPSConnection("api.getgo.com")
+
+
+          headers = { ''Authorization'': "Bearer REPLACE_BEARER_TOKEN" }
+
+
+          conn.request("POST", "/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D/resendInvitation?external=SOME_BOOLEAN_VALUE", headers=headers)
+
+
+          res = conn.getresponse()
+
+          data = res.read()
+
+
+          print(data.decode("utf-8"))'
+      - lang: Php + Http2
+        source: "<?php\n\n$client = new http\\Client;\n$request = new http\\Client\\Request;\n\n$request->setRequestUrl('https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D/resendInvitation');\n$request->setRequestMethod('POST');\n$request->setQuery(new http\\QueryString([\n  'external' => 'SOME_BOOLEAN_VALUE'\n]));\n\n$request->setHeaders([\n  'Authorization' => 'Bearer REPLACE_BEARER_TOKEN'\n]);\n\n$client->enqueue($request)->send();\n$response = $client->getResponse();\n\necho $response->getBody();"
+      - lang: Ruby + Native
+        source: 'require ''uri''
+
+          require ''net/http''
+
+          require ''openssl''
+
+
+          url = URI("https://api.getgo.com/G2W/rest/v2/organizers/%7BorganizerKey%7D/webinars/%7BwebinarKey%7D/coorganizers/%7BcoorganizerKey%7D/resendInvitation?external=SOME_BOOLEAN_VALUE")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+
+          request = Net::HTTP::Post.new(url)
+
+          request["Authorization"] = ''Bearer REPLACE_BEARER_TOKEN''
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+components:
+  parameters:
+    organizerKey:
+      name: organizerKey
+      in: path
+      description: The key of the organizer
+      required: true
+      schema:
+        type: integer
+        format: int64
+    coorganizerKey:
+      name: coorganizerKey
+      in: path
+      description: The key of the internal or external co-organizer (memberKey)
+      required: true
+      schema:
+        type: integer
+        format: int64
+    webinarKey:
+      name: webinarKey
+      in: path
+      description: The key of the webinar
+      required: true
+      schema:
+        type: integer
+        format: int64
+  schemas:
+    Coorganizer:
+      description: Describes a webinar co-organizer. A co-organizer without a GoToWebinar account is marked as external and is returned without a surname
+      required:
+      - joinLink
+      - email
+      - memberKey
+      - external
+      - surname
+      - givenName
+      properties:
+        joinLink:
+          type: string
+          description: The co-organizer's join link
+        email:
+          type: string
+          description: The co-organizer's email address
+        memberKey:
+          type: string
+          description: The co-organizer's organizer key. A new member key is created for external co-organizers
+        external:
+          type: boolean
+          description: If the co-organizer has no GoTo Webinar account, this value is set to 'true'
+        surname:
+          type: string
+          description: The co-organizer's surname. For external co-organizers this parameter is not returned
+        givenName:
+          type: string
+          description: The co-organizer's given name
+    CoorganizerReqCreate:
+      description: 'Details used for creating a co-organizer for a webinar. '
+      required:
+      - external
+      properties:
+        external:
+          type: boolean
+          description: If the co-organizer has no GoTo Webinar account, this value has to be set to 'true'
+        organizerKey:
+          type: string
+          description: The co-organizer's organizer key. This parameter has to be passed only, if 'external' is set to 'false'
+        givenName:
+          type: string
+          description: The co-organizer's given name. This parameter has to be passed only, if 'external' is set to 'true'
+        email:
+          type: string
+          description: The co-organizer's email address. This parameter has to be passed only, if 'external' is set to 'true'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'To use this API, you _must_ provide an OAuth Token that has been requested from LogMeIn OAuth Authorization Server. See https://goto-developer.logmeininc.com/how-get-access-token-and-organizer-key for documentation about how to use LogMeIn’s OAuth.
+
+        '
+      in: header
+      name: Authorization
+      scheme: Bearer
+      flows:
+        password:
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token
+        authorizationCode:
+          authorizationUrl: https://authentication.logmeininc.com/oauth/authorize
+          tokenUrl: https://authentication.logmeininc.com/oauth/token
+          refreshUrl: https://authentication.logmeininc.com/oauth/token

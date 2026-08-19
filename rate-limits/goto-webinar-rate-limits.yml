@@ -1,0 +1,47 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.goto.com/guides/References/Ref-Rate-Limits/
+docs: https://developer.goto.com/guides/References/Ref-Rate-Limits/
+limit_count: 1
+limits:
+- id: default-per-api
+  scope: per-api
+  limit: 10
+  unit: requests
+  window: 1s
+  burst: null
+  applies_to: >-
+    All GoTo API endpoints. GoTo's rate-limiting reference states "Limits are
+    applied to all API endpoints" and "Rate limits are applied per API", with a
+    single published figure of 10 requests per second.
+  source: https://developer.goto.com/guides/References/Ref-Rate-Limits/
+exhaustion:
+  status: 429
+  quote: >-
+    "When this limit is reached, an error is returned. The error response with
+    return a 429 HTTP status code."
+  source: https://developer.goto.com/guides/References/Ref-Rate-Limits/
+headers:
+  documented: []
+  note: >-
+    GoTo documents NO rate-limit response headers. There is no X-RateLimit-*,
+    no RateLimit-* (RFC 9331 draft) and no documented Retry-After. The 429
+    status code is the entire runtime signal an agent gets — it cannot read
+    remaining quota, cannot read a reset time, and has no published backoff
+    interval, so the only correct client strategy is blind exponential backoff.
+    This is the single most consequential gap in GoTo Webinar's agent surface:
+    the limit is documented, the runtime signal is not. Nothing in the
+    GoToWebinarV2 OpenAPI declares a 429 response either — no operation lists
+    429 among its responses (the spec's declared codes are 200, 201, 202, 204,
+    400, 403, 404 and 409), so a generated client will not even model the
+    throttle it is guaranteed to hit.
+custom_limits:
+  available: true
+  process: >-
+    "If these rate limits are not sufficient for your application, you can
+    request a custom rate limit. To request a custom rate limit, please contact
+    developer-support@goto.com. Including information about your application;
+    its client ID, your use case, and the maximum number of requests you expect
+    to make per second."
+  contact: developer-support@goto.com
+  source: https://developer.goto.com/guides/References/Ref-Rate-Limits/

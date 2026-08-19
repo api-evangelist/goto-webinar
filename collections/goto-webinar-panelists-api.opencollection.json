@@ -1,0 +1,80 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "GoTo Webinar REST API v2 Attendees Panelists API",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "authorization_code",
+      "authorizationUrl": "https://authentication.logmeininc.com/oauth/authorize",
+      "accessTokenUrl": "https://authentication.logmeininc.com/oauth/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Panelists",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get panelists for a webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey/panelists",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get panelists for a webinar"
+        },
+        {
+          "info": {
+            "name": "Create panelists for a webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getgo.com/G2W/rest/v2/organizers/:organizerKey/webinars/:webinarKey/panelists",
+            "params": [
+              {
+                "name": "organizerKey",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "webinarKey",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create panelists for a webinar"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,97 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.goto.com/pricing/webinar
+docs: https://www.goto.com/pricing/webinar
+plan_count: 3
+currency: USD
+billing_period: annual
+note: >-
+  Prices are the USD figures GoTo publishes in the schema.org Product/Offer
+  JSON-LD embedded in the pricing page, quoted per organizer per month billed
+  annually. The visible price labels are injected client-side and are
+  currency-switchable (USD/AUD/CAD/EUR/GBP/MXN/BRL/INR) with a monthly/annual
+  toggle, so only the annual USD figures are machine-readable. These are
+  PRODUCT plans, not API plans — see api_pricing below.
+plans:
+- name: Reach
+  price: 62
+  currency: USD
+  period: month
+  billing: annual
+  audience: Solopreneurs and small businesses
+  included:
+    organizer_seats: 1
+    participants: 500
+    channel_pages: 10
+  features:
+  - Reporting and analytics
+  - Automated emails
+  - Mobile app
+  - Integrations
+  - Polls, handouts and Q&A
+  - Audio (VoIP and phone)
+  - Local recordings
+  - Live streaming
+- name: Elevate
+  price: 103
+  currency: USD
+  period: month
+  billing: annual
+  audience: Businesses hosting webinars, town halls and events across multiple departments
+  most_popular: true
+  included:
+    participants: 1000
+    channel_pages: 30
+  features:
+  - Everything in Reach
+  - Custom branding and custom URLs
+  - Cloud recordings and unlimited cloud storage
+  - AI summary and transcripts
+  - Simulive events (run recordings as live)
+  - Breakout rooms
+  - Closed captioning
+  - Video editor, sharing and embedding
+- name: Complete
+  price: null
+  currency: USD
+  period: null
+  billing: contact-sales
+  audience: Organizations of any size ready to monetize, track attendee source and stream events live
+  included:
+    organizer_seats: custom
+    participants: 3000
+    attendees: unlimited (live stream)
+  features:
+  - Everything in Elevate
+  - Custom organizer seats
+  - Stream live to unlimited attendees
+  - Accept payments — run paid events and certified training
+  - Full service registration and certificates
+  - GoTo Meeting license included
+  - Source tracking
+  - GoTo Stage
+  note: >-
+    Published in the pricing JSON-LD with price "0" — that is the placeholder
+    for a sales-gated tier, not a free plan. The page CTA is "Contact Us" and
+    the copy says "Contact our sales team today to build a custom plan."
+trial:
+  available: true
+  credit_card_required: false
+  note: >-
+    "Enjoy all the features and tools with no commitment or credit card
+    required." — https://www.goto.com/pricing/webinar
+api_pricing:
+  metered: false
+  price: 0
+  source: https://developer.goto.com/guides/References/Ref-API-Cost/
+  quote: >-
+    "Your use of the APIs does not cost you anything. The APIs are tools to
+    help you build new solutions for new audiences. GoTo views you as a
+    business partner. However, the use of GoTo APIs does require you or your
+    customers/users to have an account for the product — GoToWebinar,
+    GoToMeeting, etc. Those accounts have no additional charges related to API
+    use."
+  note: >-
+    There is no API-specific pricing tier and no per-call metering. API access
+    is bundled with any paid GoTo Webinar product subscription; the product
+    plan above IS the API plan.

@@ -1,0 +1,80 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.goto.com/GoToWebinarV2
+versioning:
+  scheme: uri-path
+  current: v2
+  base: https://api.getgo.com/G2W/rest/v2
+  spec_version: 2.0.0
+  docs: https://developer.goto.com/GoToWebinarV2
+  previous_versions:
+  - version: v1
+    status: superseded-but-documented
+    docs: https://developer.goto.com/GoToWebinarV1
+    note: >-
+      Still reachable and documented. GoTo's v2 reference opens with "We
+      recommend you use the v2 of this API. If you are still using v1, you can
+      access v1 documentation" — a recommendation, not a sunset.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    GoTo publishes NO deprecation policy for the GoTo Webinar API. There is no
+    policy page, no notice period, no RFC 8594 Sunset/Deprecation header
+    support, and no `deprecated: true` flag on any of the 53 operations in the
+    GoToWebinarV2 OpenAPI. Deprecations are announced only as prose entries in
+    the shared Developer Center changelog after the fact — e.g. the GoToConnect
+    entries "New callOutcome Field in Queue Caller Details (outcome Deprecated)"
+    (2026-05-04) and "Deprecated inSLA Field Removed from Queue Caller Details"
+    (2026-04-14), which show fields being deprecated and then removed with no
+    machine-readable signal on either end. No Deprecation pointer is emitted in
+    apis.yml, because there is no deprecation policy to point at.
+deprecated_operations: []
+deprecated_features:
+- feature: Direct Login (OAuth password grant)
+  status: deprecated
+  source: https://developer.goto.com/guides/References/05_Direct-Login_migration/
+  evidence: >-
+    "This authentication API is now deprecated. All new clients will not be able
+    to use this API. If you have a client for which the direct login works, that
+    will continue to work for now." — GoTo Java/.NET SDK guides. The `password`
+    flow is nevertheless still declared in the live GoToWebinarV2 OpenAPI
+    securityScheme, so the contract advertises a flow the docs disallow for new
+    clients.
+- feature: LogMeIn.GoToCoreLib.NET
+  status: deprecated
+  source: https://developer.goto.com/guides/SDKs/03_NET-SDK/
+  evidence: >-
+    "DEPRECATION NOTE — The GoToCoreLib SDK is deprecated and will no longer be
+    supported. The current version is the last version for now." It remains the
+    documented dependency of the GoTo Webinar .NET SDK.
+- feature: authentication.logmeininc.com token retrieval
+  status: migrating
+  source: https://developer.goto.com/guides/Authentication/New_Token_Retrieval_Migration_Guide/
+  evidence: >-
+    GoTo publishes a "Migrating to New Token Retrieval with
+    authentication.logmeininc.com" guide. The RFC 8414 metadata served at that
+    host reports issuer https://identity.goto.com, so the identity surface is
+    mid-rename while the OpenAPI still names the legacy host.
+sla:
+  url: null
+  uptime_target: null
+  note: No API SLA or uptime commitment is published on the developer portal.
+status_page:
+  url: https://status.goto.com/
+  alias: https://status.developer.goto.com/
+  status: 200
+  scope: All GoTo products, including GoTo Webinar. Not API-specific.
+  note: >-
+    status.developer.goto.com and status.goto.com serve the same page. It is a
+    product status board — there is no separate API-availability component and
+    no machine-readable status feed was found.
+changelog:
+  url: https://developer.goto.com/changelog
+  see: changelog/goto-webinar-changelog.yml
+support:
+  developer_support: developer-support@goto.com
+  page: https://developer.goto.com/support
+  reference: https://developer.goto.com/guides/References/Ref-Get-Support/

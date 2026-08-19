@@ -1,0 +1,118 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.goto.com/guides/GoToWebinar/07_HOW_WebHooksOverview/
+docs:
+- https://developer.goto.com/guides/GoToWebinar/07_HOW_WebHooksOverview/
+- https://developer.goto.com/guides/GoToWebinar/08_HOW_webhooks/
+spec_type: Webhooks
+asyncapi:
+  published: false
+  note: >-
+    GoTo publishes no AsyncAPI document for GoTo Webinar. The event surface is
+    real and well documented in prose plus a management REST API, but there is
+    no machine-readable event contract — no AsyncAPI, no JSON Schema per event,
+    no CloudEvents envelope. This file captures the published webhook catalog
+    verbatim from GoTo's own documentation; it is NOT an AsyncAPI and nothing
+    here was authored on GoTo's behalf.
+summary: >-
+  Webhooks are GoTo Webinar's only push surface, and GoTo notes they are
+  available for GoTo Webinar ONLY across the whole product portfolio. Five
+  events are published. Delivery is to a developer-registered callback URL, with
+  a shared secret key for origin validation, and end users are subscribed
+  individually. Management is fully API-driven — the Webhooks tag of the
+  GoToWebinarV2 OpenAPI carries 12 operations for creating, updating, listing
+  and deleting both webhooks and per-user subscriptions.
+transport:
+  mechanism: HTTP callback
+  callback_url: developer-supplied per webhook
+  signing:
+    supported: true
+    mechanism: shared secret key
+    operation: createSecretKey
+    note: >-
+      "the integration developer can create a secret key for a webhook. The key
+      enables the application receiving the data to validate that it came from a
+      trusted source." The docs do not publish the signature algorithm, the
+      header name, or a verification example — an integrator cannot implement
+      verification from the published material alone.
+  retries:
+    documented: false
+  ordering:
+    documented: false
+state_model:
+  fields: [webhookState, userSubscriptionState, activationState]
+  rules:
+  - webhookState defaults to INACTIVE on creation; must be set to ACTIVE via updateWebhooks before any event is delivered.
+  - userSubscriptionState defaults to ACTIVE on creation; set to INACTIVE via createUserSubscriptions to pause a specific subscriber.
+  - activationState is derived — ACTIVE only when webhookState AND userSubscriptionState are both ACTIVE, otherwise INACTIVE.
+  gotcha: >-
+    A newly created webhook delivers nothing until it is explicitly activated.
+    This is the most common first-integration failure and it is a two-call
+    sequence, not one.
+events:
+- name: registrant.added
+  version: 1.0.0
+  product: g2w
+  description: Fired to the webinar organizer when a user registers for the webinar. Carries the full registrant record.
+  key_fields: [eventName, eventVersion, product, eventKey, firstName, lastName, email, phone, address, city, state, country, zipCode, organization, jobTitle, Industry, comments, registrationDate, numberOfEmployees, purchasingRole, purchasingTimeFrame, status, webinarKey, webinarTitle, experienceType, recurrenceType, webinarCreatorKey, registrationSource, joinUrl, registrantKey, timestamp, responses]
+  notes:
+  - 'status is one of: Waiting, Approved, Cancelled, Denied.'
+  - joinUrl is present only when status is Approved.
+  - responses carries custom registration questions as [questionText, questionType, [answerText]] with questionType MULTIPLE_CHOICE or SHORT_ANSWER.
+  - registrationSource reflects the Share Your Webinar values set in the GoTo Webinar dashboard — this is the lead-attribution field.
+- name: registrant.joined
+  version: 1.0.0
+  product: g2w
+  description: Fired to the organizer when a registrant actually joins the live session.
+  key_fields: [eventName, eventVersion, product, eventKey, firstName, lastName, email, webinarKey, sessionKey, webinarTitle, experienceType, recurrenceType, registrantKey, webinarCreatorKey, joinTime, timestamp]
+- name: webinar.created
+  version: 1.0.0
+  product: g2w
+  description: Fired to the organizer when a webinar is created.
+  key_fields: [eventName, eventVersion, accountKey, organizerKey, product, eventKey, webinarKey, webinarTitle, description, experienceType, recurrenceType, recurrenceKey, webinarCreationDate, status, times, startTime, endTime, timeZone]
+  notes:
+  - status is always NEW.
+  - recurrenceKey correlates series webinars and is null for other types.
+  - times is a list of [startTime, endTime] pairs, one per session.
+- name: webinar.changed
+  version: 1.0.0
+  product: g2w
+  description: Fired to the organizer when an existing webinar is updated or deleted.
+  key_fields: [eventName, eventVersion, accountKey, organizerKey, product, eventKey, webinarKey, webinarTitle, description, experienceType, recurrenceType, status, times, startTime, endTime, timeZone]
+  notes:
+  - 'status is UPDATED or DELETED — deletion is delivered on the changed event, not a separate webinar.deleted event.'
+- name: survey.submitted
+  version: 1.0.0
+  product: g2w
+  added: '2026-06-09'
+  description: Fired to the organizer when a webinar attendee submits a post-session survey.
+  key_fields: [eventName, eventVersion, product, eventKey, timestamp, webinarKey, webinarTitle, webinarCreatorKey, experienceType, sessionKey, registrantKey, surveyName, responses]
+  notes:
+  - responses uses the same shape as registrant.added, with questionType one of MULTIPLE_CHOICE, MULTIPLE_ANSWER, RATING, SHORT_ANSWER.
+  - The newest addition to the event surface — see changelog/goto-webinar-changelog.yml.
+common_fields:
+  eventName: string — the event type, matching the name above
+  eventVersion: string — currently 1.0.0 on every event
+  product: string — always "g2w" for GoTo Webinar
+  eventKey: string — unique alphanumeric identifier for the event instance, usable for consumer-side deduplication
+  timestamp: string — ISO 8601 event generation time
+management_api:
+  spec: openapi/goto-webinar-webhooks-api-openapi.yml
+  operations:
+  - createSecretKey
+  - createWebhooks
+  - updateWebhooks
+  - getWebhooks
+  - getWebhook
+  - deleteWebhooks
+  - createUserSubscriptions
+  - updateUserSubscriptions
+  - getUserSubscriptions
+  - getUserSubscription
+  - deleteUserSubscriptions
+gaps:
+- No AsyncAPI or JSON Schema for any of the five event payloads — field lists exist only as HTML tables in a guide.
+- The signature/verification scheme for the secret key is not published (no algorithm, no header name, no example).
+- No retry, backoff, ordering or at-least-once/at-most-once delivery semantics are documented.
+- No replay or event-history endpoint; a missed delivery cannot be recovered from GoTo.
+- eventVersion exists on every payload but no version-negotiation or evolution policy is published.
