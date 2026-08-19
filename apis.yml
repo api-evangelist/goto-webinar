@@ -38,7 +38,7 @@ url: >-
   https://raw.githubusercontent.com/api-evangelist/goto-webinar/refs/heads/main/apis.yml
 created: '2026-05-11'
 modified: '2026-08-13'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: goto-webinar:rest-api-v2
   name: GoTo Webinar REST API v2
