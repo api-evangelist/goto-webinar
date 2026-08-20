@@ -30,6 +30,17 @@ tags:
   - Marketing
   - Lead Capture
   - Registration
+  - Webhook
+  - Event Management
+  - Collaboration
+  - Analytics
+tags_raw:
+  - Webinars
+  - Virtual Events
+  - Video Conferencing
+  - Marketing
+  - Lead Capture
+  - Registration
   - Webhooks
   - Event Management
   - Collaboration
@@ -156,6 +167,8 @@ apis:
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
+  - Co-Organizers
+  tags_raw:
   - Co-organizers
   properties:
   - type: OpenAPI
@@ -169,6 +182,8 @@ apis:
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
+  - Recording Assets
+  tags_raw:
   - RecordingAssets
   properties:
   - type: OpenAPI
@@ -183,6 +198,8 @@ apis:
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
