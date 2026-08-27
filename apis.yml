@@ -51,54 +51,11 @@ created: '2026-05-11'
 modified: '2026-08-13'
 specificationVersion: '0.23'
 apis:
-- aid: goto-webinar:rest-api-v2
-  name: GoTo Webinar REST API v2
-  description: >-
-    The full GoTo Webinar v2 REST API as GoTo publishes it — 53 operations across
-    39 paths covering webinars, sessions, registrants, attendees, panelists,
-    co-organizers, polls, Q&A, surveys, recording assets and webhook management.
-    Authentication is OAuth 2.0 authorization-code with PKCE (S256) against GoTo's
-    identity service — authorization at identity.goto.com/oauth/authorize and
-    token exchange at identity.goto.com/oauth/token, still named as
-    authentication.logmeininc.com in the contract — using the product-level scope
-    `collab:`. API access carries no additional charge beyond a GoTo Webinar
-    product subscription.
-  humanURL: https://developer.goto.com/GoToWebinarV2
-  baseURL: https://api.getgo.com/G2W/rest/v2
-  tags:
-  - Webinars
-  - Virtual Events
-  - Registrants
-  - Attendees
-  - Recordings
-  - Analytics
-  properties:
-  - type: OpenAPI
-    url: openapi/_original/goto-webinar-openapi.yml
-  - type: Documentation
-    url: https://developer.goto.com/GoToWebinarV2
-  - type: APIReference
-    url: https://developer.goto.com/GoToWebinarV2
-  - type: Authentication
-    url: https://developer.goto.com/Authentication/
-  - type: Guides
-    url: https://developer.goto.com/guides/
-  - type: ChangeLog
-    url: https://developer.goto.com/changelog
-  - type: StatusPage
-    url: https://status.goto.com/
-  - type: Postman
-    url: collections/goto-webinar-v2-provider.postman_collection.json
-  - type: RateLimits
-    url: rate-limits/goto-webinar-rate-limits.yml
-  - type: Webhooks
-    url: asyncapi/goto-webinar-webhooks.yml
 - aid: goto-webinar:goto-webinar-attendees-api
   name: GoTo Webinar Attendees API
   description: >-
-    Session-level attendee reporting for GoTo Webinar — 5 operations covering the
-    attendees of a session, a single attendee, and that attendee's poll answers,
-    Q&A questions and survey responses.
+    Session-level attendee reporting for GoTo Webinar — 5 operations covering the attendees of a session,
+    a single attendee, and that attendee's poll answers, Q&A questions and survey responses.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -109,8 +66,8 @@ apis:
 - aid: goto-webinar:goto-webinar-panelists-api
   name: GoTo Webinar Panelists API
   description: >-
-    Panelist management for a GoTo Webinar webinar — 4 operations to list, invite,
-    remove and resend the invitation for the presenters on a webinar.
+    Panelist management for a GoTo Webinar webinar — 4 operations to list, invite, remove and resend the
+    invitation for the presenters on a webinar.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -121,9 +78,8 @@ apis:
 - aid: goto-webinar:goto-webinar-registrants-api
   name: GoTo Webinar Registrants API
   description: >-
-    Registration management for GoTo Webinar — 5 operations to create, list, read
-    and delete registrants, plus read the registration form fields and custom
-    questions configured on a webinar.
+    Registration management for GoTo Webinar — 5 operations to create, list, read and delete registrants,
+    plus read the registration form fields and custom questions configured on a webinar.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -134,9 +90,9 @@ apis:
 - aid: goto-webinar:goto-webinar-sessions-api
   name: GoTo Webinar Sessions API
   description: >-
-    Session reporting for GoTo Webinar — 7 operations covering an organizer's
-    sessions in a date range, the sessions of a webinar, one session, its
-    attendance performance, and its polls, Q&A questions and surveys.
+    Session reporting for GoTo Webinar — 7 operations covering an organizer's sessions in a date range,
+    the sessions of a webinar, one session, its attendance performance, and its polls, Q&A questions and
+    surveys.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -147,10 +103,9 @@ apis:
 - aid: goto-webinar:goto-webinar-webinars-api
   name: GoTo Webinar Webinars API
   description: >-
-    The core GoTo Webinar surface — 15 operations to schedule, read, update,
-    cancel and copy webinars, list in-session and account-wide webinars, read
-    meeting times, start URLs, audio settings, recording assets, cross-session
-    attendees and webinar-wide performance.
+    The core GoTo Webinar surface — 15 operations to schedule, read, update, cancel and copy webinars,
+    list in-session and account-wide webinars, read meeting times, start URLs, audio settings, recording
+    assets, cross-session attendees and webinar-wide performance.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -161,9 +116,8 @@ apis:
 - aid: goto-webinar:goto-webinar-co-organizers-api
   name: GoTo Webinar Co Organizers API
   description: >-
-    Co-organizer management for a GoTo Webinar webinar — 4 operations to list,
-    add, remove and resend invitations for co-hosts, internal by organizerKey or
-    external by email.
+    Co-organizer management for a GoTo Webinar webinar — 4 operations to list, add, remove and resend
+    invitations for co-hosts, internal by organizerKey or external by email.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -176,9 +130,9 @@ apis:
 - aid: goto-webinar:goto-webinar-recordingassets-api
   name: GoTo Webinar Recording Assets API
   description: >-
-    Recording asset search for GoTo Webinar — 2 operations to search stored
-    recordings for the authenticated organizer or, with an admin token, across an
-    entire account. Assets can be reused as the source of a Simulive webinar.
+    Recording asset search for GoTo Webinar — 2 operations to search stored recordings for the authenticated
+    organizer or, with an admin token, across an entire account. Assets can be reused as the source of
+    a Simulive webinar.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
@@ -191,10 +145,9 @@ apis:
 - aid: goto-webinar:goto-webinar-webhooks-api
   name: GoTo Webinar Webhooks API
   description: >-
-    Webhook management for GoTo Webinar — 11 operations to create the delivery
-    secret key, register and activate webhook callbacks, and create, read, update
-    and delete the per-user subscriptions that make events flow. GoTo Webinar is
-    the only GoTo product with webhooks.
+    Webhook management for GoTo Webinar — 11 operations to create the delivery secret key, register and
+    activate webhook callbacks, and create, read, update and delete the per-user subscriptions that make
+    events flow. GoTo Webinar is the only GoTo product with webhooks.
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
