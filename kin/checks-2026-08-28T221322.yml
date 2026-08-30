@@ -2,15 +2,15 @@
 kin_checks:
   slug: goto-webinar
   schema_version: 0.15.1
-  scored_at: '2026-08-27'
-  run_ts: 2026-08-27T140727
+  scored_at: '2026-08-28'
+  run_ts: 2026-08-28T221322
   note: Actionable checks only (missed + partial). earned/na are every other check
     in rubric/scoring-0.15.1.yml; counts below let you verify that.
   counts:
     total: 130
-    earned: 57
-    partial: 13
-    missed: 36
+    earned: 59
+    partial: 9
+    missed: 38
     na: 24
   checks:
   - id: llms_txt_published
@@ -19,18 +19,24 @@ kin_checks:
     status: missed
   - id: openapi_3_2
     status: missed
-    detail: 0 of 9 openapi documents pass
+    detail: 0 of 8 openapi documents pass
   - id: openapi_3_1
     status: missed
-    detail: 0 of 9 openapi documents pass
+    detail: 0 of 8 openapi documents pass
   - id: info_complete
     status: missed
-    detail: 0 of 9 openapi documents pass
+    detail: 0 of 8 openapi documents pass
   - id: examples_present
     status: missed
+  - id: oauth_flows_current
+    status: missed
+    detail: 0 of 8 openapi documents pass
+  - id: oauth_scopes_enumerated
+    status: missed
+    detail: 0 of 8 openapi documents pass
   - id: webhooks_or_callbacks
     status: missed
-    detail: 0 of 9 openapi documents pass
+    detail: 0 of 8 openapi documents pass
   - id: json_schema_present
     status: missed
   - id: json_schema_per_resource
@@ -89,26 +95,10 @@ kin_checks:
     status: missed
   - id: agentic_commerce
     status: missed
-  - id: servers_defined
-    status: partial
-    earned: 2.67
-    detail: 8 of 9 openapi documents pass
   - id: components_reuse
     status: partial
-    earned: 2.0
-    detail: 6 of 9 openapi documents pass
-  - id: security_schemes_defined
-    status: partial
-    earned: 3.56
-    detail: 8 of 9 openapi documents pass
-  - id: oauth_flows_current
-    status: partial
-    earned: 0.44
-    detail: 1 of 9 openapi documents pass
-  - id: oauth_scopes_enumerated
-    status: partial
-    earned: 0.44
-    detail: 1 of 9 openapi documents pass
+    earned: 2.25
+    detail: 6 of 8 openapi documents pass
   - id: conformance_declared
     status: partial
     earned: 1.5
