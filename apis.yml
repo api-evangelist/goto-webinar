@@ -133,7 +133,7 @@ apis:
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
-  - Co-organizers
+  - Co-Organizers
   tags_raw:
   - Co-organizers
   properties:
@@ -148,7 +148,7 @@ apis:
   humanURL: https://developer.goto.com/GoToWebinarV2
   baseURL: https://api.getgo.com/G2W/rest/v2
   tags:
-  - RecordingAssets
+  - Recording Assets
   tags_raw:
   - RecordingAssets
   properties:
